@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
@@ -23,7 +24,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:padding="8dp"
+            tools:ignore="UselessParent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -31,15 +33,18 @@
                 android:layout_margin="8dp">
 
                 <TextView
+                    style="@style/FieldName"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="Station ID"/>
+                    android:text="@string/station_id"/>
 
                 <EditText
+                    android:id="@+id/stationId"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:inputType="text"/>
 
             </LinearLayout>
 
@@ -49,15 +54,18 @@
                 android:layout_margin="8dp">
 
                 <TextView
+                    style="@style/FieldName"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="Date"/>
+                    android:text="@string/date"/>
 
                 <EditText
+                    android:id="@+id/date"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:inputType="date"/>
 
             </LinearLayout>
 
@@ -67,15 +75,18 @@
                 android:layout_margin="8dp">
 
                 <TextView
+                    style="@style/FieldName"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="Target"/>
+                    android:text="@string/target"/>
 
                 <EditText
+                    android:id="@+id/target"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"/>
 
             </LinearLayout>
 
@@ -85,15 +96,18 @@
                 android:layout_margin="8dp">
 
                 <TextView
+                    style="@style/FieldName"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="Actual"/>
+                    android:text="@string/actual"/>
 
                 <EditText
+                    android:id="@+id/actual"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"/>
 
             </LinearLayout>
 
@@ -103,15 +117,18 @@
                 android:layout_margin="8dp">
 
                 <TextView
+                    style="@style/FieldName"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="Variance"/>
+                    android:text="@string/variance"/>
 
                 <EditText
+                    android:id="@+id/variance"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:inputType="numberDecimal"/>
 
             </LinearLayout>
 
