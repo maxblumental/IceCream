@@ -5,4 +5,5 @@
     <string name="target">Target</string>
     <string name="actual">Actual</string>
     <string name="variance">Variance</string>
+    <string name="send">Send</string>
 </resources>
