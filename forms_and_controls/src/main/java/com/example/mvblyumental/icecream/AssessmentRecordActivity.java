@@ -1,6 +1,9 @@
 package com.example.mvblyumental.icecream;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -100,6 +103,10 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
     }
 
     private void loadRecords() {
+        if (isNetworkUnavailable()) {
+            showToast("Network is unavailable.");
+            return;
+        }
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference("records")
                 .addListenerForSingleValueEvent(new RecordsValueEventListener());
@@ -182,6 +189,10 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
         }
 
         private void updateRecordState(final AssessmentRecord record) {
+            if (isNetworkUnavailable()) {
+                showToast("Network is unavailable.");
+                return;
+            }
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             Map<String, Object> map = Collections.<String, Object>singletonMap(record.stationId, record);
             database.getReference("records")
@@ -302,5 +313,11 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
 
     private void showToast(String text) {
         Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+    }
+
+    private boolean isNetworkUnavailable() {
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        return networkInfo == null || !networkInfo.isConnected();
     }
 }
