@@ -5,22 +5,22 @@ import android.os.Parcelable;
 
 import java.util.Date;
 
-public class AssessmentRecord implements Parcelable {
+class AssessmentRecord implements Parcelable {
 
-    public String stationId;
+    String stationId;
 
-    public int target;
+    int target;
 
-    public Date date;
+    Date date;
 
-    public int actual;
+    int actual;
 
-    public int variance;
+    int variance;
 
     public AssessmentRecord() {
     }
 
-    public AssessmentRecord(String stationId, int actual, int variance) {
+    AssessmentRecord(String stationId, int actual, int variance) {
         this.stationId = stationId;
         this.target = 42;
         this.date = new Date();
@@ -28,7 +28,7 @@ public class AssessmentRecord implements Parcelable {
         this.variance = variance;
     }
 
-    protected AssessmentRecord(Parcel in) {
+    private AssessmentRecord(Parcel in) {
         stationId = in.readString();
         target = in.readInt();
         date = new Date(in.readLong());
