@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -63,6 +64,11 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
             outState.putParcelableArrayList(KEY_ASSESSMENT_RECORDS, list);
             outState.putStringArrayList(KEY_STATION_IDS, stationIds);
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        loadRecords();
     }
 
     private void findViews() {
@@ -165,7 +171,6 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
         @Override
         public void onClick(View v) {
             AssessmentRecord record = readAssessmentRecord();
-            updateSessionState(record);
             updateRecordState(record);
         }
 
@@ -176,15 +181,37 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
             return new AssessmentRecord(stationId, actual, variance);
         }
 
+        private void updateRecordState(final AssessmentRecord record) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            Map<String, Object> map = Collections.<String, Object>singletonMap(record.stationId, record);
+            database.getReference("records")
+                    .updateChildren(map, new RecordUpdateCompletionListener(record));
+        }
+
+        private class RecordUpdateCompletionListener implements DatabaseReference.CompletionListener {
+
+            private AssessmentRecord record;
+
+            RecordUpdateCompletionListener(AssessmentRecord record) {
+                this.record = record;
+            }
+
+            @Override
+            public void onComplete(DatabaseError error, DatabaseReference reference) {
+                if (error == null) {
+                    String text = String.format(locale, "Updated record for %s", record.stationId);
+                    showToast(text);
+                    updateSessionState(record);
+                } else {
+                    showErrorToast("Failed to update record", error);
+                }
+            }
+        }
+
         private void updateSessionState(AssessmentRecord record) {
             stationIdToRecord.put(record.stationId, record);
         }
 
-        private void updateRecordState(AssessmentRecord record) {
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            Map<String, Object> map = Collections.<String, Object>singletonMap(record.stationId, record);
-            database.getReference("records").updateChildren(map);
-        }
     }
 
     private class RecordsValueEventListener implements ValueEventListener {
@@ -214,6 +241,7 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
         public void onCancelled(DatabaseError databaseError) {
             showErrorToast("Records retrieval was cancelled", databaseError);
         }
+
     }
 
     private class StationsSpinnerItemSelectedListener implements AdapterView.OnItemSelectedListener {
@@ -229,6 +257,7 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
         public void onNothingSelected(AdapterView<?> parent) {
 
         }
+
     }
 
     private void updateFields(AssessmentRecord record) {
@@ -256,11 +285,6 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
         ArrayAdapter<String> adapter = new ArrayAdapter<>(AssessmentRecordActivity.this,
                 android.R.layout.simple_list_item_1, stationIds);
         stationsSpinner.setAdapter(adapter);
-    }
-
-    @Override
-    public void onRefresh() {
-        loadRecords();
     }
 
     private void showErrorToast(String message, Exception e) {
