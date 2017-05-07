@@ -2,6 +2,7 @@ package com.example.mvblyumental.icecream;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -25,7 +27,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class AssessmentRecordActivity extends AppCompatActivity {
+public class AssessmentRecordActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private Spinner stationsSpinner;
     private EditText stationIdEditText;
@@ -34,6 +36,7 @@ public class AssessmentRecordActivity extends AppCompatActivity {
     private EditText varianceEditText;
     private EditText dateEditText;
     private Button sendButton;
+    private SwipeRefreshLayout refreshLayout;
 
     private Map<String, AssessmentRecord> stationIdToRecord = new HashMap<>();
     private ArrayList<String> stationIds = new ArrayList<>();
@@ -70,12 +73,14 @@ public class AssessmentRecordActivity extends AppCompatActivity {
         varianceEditText = (EditText) findViewById(R.id.variance);
         dateEditText = (EditText) findViewById(R.id.date);
         sendButton = (Button) findViewById(R.id.sendButton);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
     }
 
     private void setListeners() {
         actualEditText.addTextChangedListener(new ActualFieldTextWatcher());
         sendButton.setOnClickListener(new SendButtonClickListener());
         stationsSpinner.setOnItemSelectedListener(new StationsSpinnerItemSelectedListener());
+        refreshLayout.setOnRefreshListener(this);
     }
 
     private void initializeScreen(Bundle savedInstanceState) {
@@ -105,6 +110,7 @@ public class AssessmentRecordActivity extends AppCompatActivity {
     }
 
     private class ActualFieldTextWatcher implements TextWatcher {
+
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -151,9 +157,11 @@ public class AssessmentRecordActivity extends AppCompatActivity {
             }
             return color;
         }
+
     }
 
     private class SendButtonClickListener implements View.OnClickListener {
+
         @Override
         public void onClick(View v) {
             AssessmentRecord record = readAssessmentRecord();
@@ -183,9 +191,16 @@ public class AssessmentRecordActivity extends AppCompatActivity {
 
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
+            refreshLayout.setRefreshing(false);
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 String key = snapshot.getKey();
-                AssessmentRecord record = snapshot.getValue(AssessmentRecord.class);
+                AssessmentRecord record;
+                try {
+                    record = snapshot.getValue(AssessmentRecord.class);
+                } catch (DatabaseException e) {
+                    showErrorToast("Failed to get assessment record from snapshot", e);
+                    return;
+                }
                 stationIdToRecord.put(key, record);
             }
 
@@ -197,7 +212,7 @@ public class AssessmentRecordActivity extends AppCompatActivity {
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
-            Toast.makeText(AssessmentRecordActivity.this, databaseError.getMessage(), Toast.LENGTH_LONG).show();
+            showErrorToast("Records retrieval was cancelled", databaseError);
         }
     }
 
@@ -241,5 +256,27 @@ public class AssessmentRecordActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(AssessmentRecordActivity.this,
                 android.R.layout.simple_list_item_1, stationIds);
         stationsSpinner.setAdapter(adapter);
+    }
+
+    @Override
+    public void onRefresh() {
+        loadRecords();
+    }
+
+    private void showErrorToast(String message, Exception e) {
+        showErrorToast(message, e.getMessage());
+    }
+
+    private void showErrorToast(String message, DatabaseError e) {
+        showErrorToast(message, e.getMessage());
+    }
+
+    private void showErrorToast(String message, String errorMessage) {
+        String text = String.format("%s: %s", message, errorMessage);
+        showToast(text);
+    }
+
+    private void showToast(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
     }
 }
