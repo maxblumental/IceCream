@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AssessmentRecordField">
+        <attr name="fieldName" format="string"/>
+        <attr name="enabled" format="boolean"/>
+        <attr name="text" format="string"/>
+        <attr name="inputType" format="enum">
+            <enum name="text" value="0"/>
+            <enum name="decimal" value="1"/>
+        </attr>
+    </declare-styleable>
+</resources>
