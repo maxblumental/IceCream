@@ -86,7 +86,8 @@
                     android:layout_margin="8dp"
                     app:enabled="false"
                     app:fieldName="@string/variance"
-                    app:numberDecimalText="@{record.variance}"/>
+                    app:numberDecimalText="@{record.variance}"
+                    app:valueColor="@{record.varianceDegree}"/>
 
                 <Button
                     android:id="@+id/sendButton"

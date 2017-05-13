@@ -26,7 +26,11 @@ public class AssessmentRecordActivity extends AppCompatActivity {
         binding.setRecord(record);
         binding.setActualController(new ActualFieldControllerImpl(record));
         binding.setStationIdsController(new StationIdsSpinnerControllerImpl(recordsManager, record));
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         recordsManager.loadRecords();
     }
 }

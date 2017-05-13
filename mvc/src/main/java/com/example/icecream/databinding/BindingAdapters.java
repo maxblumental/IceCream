@@ -1,12 +1,15 @@
 package com.example.icecream.databinding;
 
 import android.databinding.BindingAdapter;
+import android.support.annotation.ColorRes;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.example.commonui.AssessmentRecordField;
+import com.example.icecream.R;
+import com.example.icecream.model.AssessmentRecord;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -57,5 +60,25 @@ public class BindingAdapters {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    @BindingAdapter("valueColor")
+    public static void setValueColor(AssessmentRecordField field,
+                                     AssessmentRecord.VarianceDegree varianceDegree) {
+        if (varianceDegree == null) {
+            return;
+        }
+        @ColorRes int color;
+        switch (varianceDegree) {
+            case GOOD:
+                color = R.color.goodVarianceDegree;
+                break;
+            case BAD:
+                color = R.color.badVarianceDegree;
+                break;
+            default:
+                color = R.color.normalVarianceDegree;
+        }
+        field.setValueColor(color);
     }
 }

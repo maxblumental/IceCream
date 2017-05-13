@@ -8,5 +8,6 @@
             <enum name="text" value="0"/>
             <enum name="decimal" value="1"/>
         </attr>
+        <attr name="valueColor" format="color"/>
     </declare-styleable>
 </resources>

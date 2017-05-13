@@ -19,6 +19,8 @@ public class AssessmentRecord extends BaseObservable {
 
     public int variance;
 
+    public VarianceDegree varianceDegree;
+
     public AssessmentRecord() {
     }
 
@@ -47,6 +49,11 @@ public class AssessmentRecord extends BaseObservable {
         return variance;
     }
 
+    @Bindable
+    public VarianceDegree getVarianceDegree() {
+        return varianceDegree;
+    }
+
     public void setStationId(String stationId) {
         this.stationId = stationId;
         notifyPropertyChanged(BR.stationId);
@@ -72,6 +79,33 @@ public class AssessmentRecord extends BaseObservable {
     public void setVariance(int variance) {
         this.variance = variance;
         notifyPropertyChanged(BR.variance);
+        updateVarianceDegree();
+    }
+
+    public void setVarianceDegree(VarianceDegree varianceDegree) {
+        this.varianceDegree = varianceDegree;
+        notifyPropertyChanged(BR.varianceDegree);
+    }
+
+    public enum VarianceDegree {
+        GOOD, NORMAL, BAD
+    }
+
+    private void updateVarianceDegree() {
+        if (target == 0) {
+            setVarianceDegree(VarianceDegree.NORMAL);
+            return;
+        }
+        float percent = Math.abs(((float) variance) / target);
+        VarianceDegree degree;
+        if (variance > 0 && percent > 0.05f) {
+            degree = VarianceDegree.GOOD;
+        } else if (variance < 0 && percent > 0.1f) {
+            degree = VarianceDegree.BAD;
+        } else {
+            degree = VarianceDegree.NORMAL;
+        }
+        setVarianceDegree(degree);
     }
 
     public void fillFrom(AssessmentRecord record) {

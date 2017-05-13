@@ -2,7 +2,9 @@ package com.example.commonui;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -44,6 +46,10 @@ public class AssessmentRecordField extends LinearLayout {
                 }
             }
         });
+    }
+
+    public void setValueColor(@ColorRes int color) {
+        field.setTextColor(ResourcesCompat.getColor(getResources(), color, null));
     }
 
     private void initialize(Context context) {

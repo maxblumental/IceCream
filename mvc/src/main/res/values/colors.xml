@@ -3,4 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="goodVarianceDegree">#00FF00</color>
+    <color name="normalVarianceDegree">#000000</color>
+    <color name="badVarianceDegree">#FF0000</color>
 </resources>
