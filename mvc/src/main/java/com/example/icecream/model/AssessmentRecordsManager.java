@@ -3,7 +3,7 @@ package com.example.icecream.model;
 import android.databinding.ObservableList;
 import android.databinding.ObservableMap;
 
-public interface Model {
+public interface AssessmentRecordsManager {
 
     void loadRecords();
 

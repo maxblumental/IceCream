@@ -5,8 +5,8 @@
     <data>
 
         <variable
-            name="model"
-            type="com.example.icecream.model.Model"/>
+            name="recordsManager"
+            type="com.example.icecream.model.AssessmentRecordsManager"/>
 
         <variable
             name="record"
@@ -44,8 +44,8 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="8dp"
-                    app:adapter="@{model.stationIds}"
-                    app:itemSelectedListener="@{(position) -> stationIdsController.onItemSelected(position)}"/>
+                    app:adapter="@{recordsManager.stationIds}"
+                    app:itemSelectedListener="@{stationIdsController::onItemSelected}"/>
 
                 <com.example.commonui.AssessmentRecordField
                     android:layout_width="match_parent"
@@ -75,10 +75,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    app:fieldChangedListener="@{(view,hasFocus) -> actualController.onChanged(view,hasFocus)}"
                     app:fieldName="@string/actual"
                     app:inputType="decimal"
-                    app:numberDecimalText="@{record.actual}"/>
+                    app:numberDecimalText="@{record.actual}"
+                    app:onValueChangeListener="@{actualController::onChange}"/>
 
                 <com.example.commonui.AssessmentRecordField
                     android:layout_width="match_parent"

@@ -8,12 +8,13 @@ import com.example.icecream.controller.ActualFieldControllerImpl;
 import com.example.icecream.controller.StationIdsSpinnerControllerImpl;
 import com.example.icecream.databinding.ActivityAssessmentRecordBinding;
 import com.example.icecream.model.AssessmentRecord;
-import com.example.icecream.model.Model;
-import com.example.icecream.model.ModelImpl;
+import com.example.icecream.model.AssessmentRecordsManager;
+import com.example.icecream.model.AssessmentRecordsManagerImpl;
 
 public class AssessmentRecordActivity extends AppCompatActivity {
 
-    private Model model = new ModelImpl();
+    private AssessmentRecordsManager recordsManager = new AssessmentRecordsManagerImpl();
+    private AssessmentRecord record = new AssessmentRecord();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,11 +22,11 @@ public class AssessmentRecordActivity extends AppCompatActivity {
         ActivityAssessmentRecordBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_assessment_record);
 
-        binding.setModel(model);
-        binding.setRecord(new AssessmentRecord());
-        binding.setActualController(new ActualFieldControllerImpl(binding));
-        binding.setStationIdsController(new StationIdsSpinnerControllerImpl(binding));
+        binding.setRecordsManager(recordsManager);
+        binding.setRecord(record);
+        binding.setActualController(new ActualFieldControllerImpl(record));
+        binding.setStationIdsController(new StationIdsSpinnerControllerImpl(recordsManager, record));
 
-        model.loadRecords();
+        recordsManager.loadRecords();
     }
 }

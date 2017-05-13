@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -24,8 +25,25 @@ public class AssessmentRecordField extends LinearLayout {
         field.setText(text);
     }
 
-    public void setOnFocusChangeListener(OnFocusChangeListener listener) {
-        field.setOnFocusChangeListener(listener);
+    public String getText() {
+        return field.getText().toString();
+    }
+
+    public interface ValueChangeListener {
+        void onChange(String value);
+    }
+
+    public void setOnValueChangeListener(final ValueChangeListener listener) {
+        field.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    EditText editText = (EditText) v;
+                    String text = editText.getText().toString();
+                    listener.onChange(text);
+                }
+            }
+        });
     }
 
     private void initialize(Context context) {

@@ -3,7 +3,7 @@ package com.example.icecream.model;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
-import com.android.databinding.library.baseAdapters.BR;
+import com.example.icecream.BR;
 
 import java.util.Date;
 
@@ -47,26 +47,39 @@ public class AssessmentRecord extends BaseObservable {
         return variance;
     }
 
+    public void setStationId(String stationId) {
+        this.stationId = stationId;
+        notifyPropertyChanged(BR.stationId);
+    }
+
     public void setDate(Date date) {
         this.date = date;
-        notifyPropertyChanged(com.example.icecream.BR.date);
+        notifyPropertyChanged(BR.date);
     }
 
     public void setActual(int actual) {
         this.actual = actual;
-        notifyPropertyChanged(com.example.icecream.BR.actual);
+        notifyPropertyChanged(BR.actual);
         updateVariance();
-    }
-
-    private void setVariance(int variance) {
-        this.variance = variance;
-        notifyPropertyChanged(com.example.icecream.BR.variance);
     }
 
     public void setTarget(int target) {
         this.target = target;
         notifyPropertyChanged(BR.target);
         updateVariance();
+    }
+
+    public void setVariance(int variance) {
+        this.variance = variance;
+        notifyPropertyChanged(BR.variance);
+    }
+
+    public void fillFrom(AssessmentRecord record) {
+        setStationId(record.stationId);
+        setDate(record.date);
+        setTarget(record.target);
+        setActual(record.actual);
+        setVariance(record.variance);
     }
 
     private void updateVariance() {

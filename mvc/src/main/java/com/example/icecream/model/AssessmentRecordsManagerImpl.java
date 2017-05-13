@@ -4,7 +4,6 @@ import android.databinding.ObservableArrayList;
 import android.databinding.ObservableArrayMap;
 import android.databinding.ObservableList;
 import android.databinding.ObservableMap;
-import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,14 +16,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
-public class ModelImpl implements Model {
+public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
 
     private ObservableMap<String, AssessmentRecord> stationIdToRecord = new ObservableArrayMap<>();
     private ObservableList<String> stationIds = new ObservableArrayList<>();
 
     @Override
     public void loadRecords() {
-        Log.d("investigation", "loadRecords()");
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference("records")
                 .addListenerForSingleValueEvent(new RecordsValueEventListener());
@@ -51,7 +49,6 @@ public class ModelImpl implements Model {
 
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            Log.d("investigation", "onDataChange");
             stationIdToRecord.clear();
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 String key = snapshot.getKey();

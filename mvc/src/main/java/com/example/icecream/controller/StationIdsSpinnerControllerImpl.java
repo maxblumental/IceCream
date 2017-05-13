@@ -1,22 +1,22 @@
 package com.example.icecream.controller;
 
 import com.example.icecream.model.AssessmentRecord;
-import com.example.icecream.model.Model;
-import com.example.icecream.databinding.ActivityAssessmentRecordBinding;
+import com.example.icecream.model.AssessmentRecordsManager;
 
 public class StationIdsSpinnerControllerImpl implements StationIdsSpinnerController {
 
-    private ActivityAssessmentRecordBinding binding;
+    private AssessmentRecordsManager model;
+    private AssessmentRecord assessmentRecord;
 
-    public StationIdsSpinnerControllerImpl(ActivityAssessmentRecordBinding binding) {
-        this.binding = binding;
+    public StationIdsSpinnerControllerImpl(AssessmentRecordsManager model, AssessmentRecord assessmentRecord) {
+        this.model = model;
+        this.assessmentRecord = assessmentRecord;
     }
 
     @Override
     public void onItemSelected(int position) {
-        Model model = binding.getModel();
         String stationId = model.getStationIds().get(position);
         AssessmentRecord record = model.getStationIdToRecord().get(stationId);
-        binding.setRecord(record);
+        assessmentRecord.fillFrom(record);
     }
 }

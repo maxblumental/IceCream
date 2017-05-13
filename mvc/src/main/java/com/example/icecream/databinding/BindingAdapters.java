@@ -58,19 +58,4 @@ public class BindingAdapters {
             }
         });
     }
-
-    public interface OnFieldFocusChangeListener {
-        void onChanged(View v, boolean hasFocus);
-    }
-
-    @BindingAdapter("fieldChangedListener")
-    public static void setFieldFocusChangeListener(AssessmentRecordField field,
-                                                   final OnFieldFocusChangeListener listener) {
-        field.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                listener.onChanged(view, hasFocus);
-            }
-        });
-    }
 }
