@@ -1,6 +1,7 @@
 package com.example.icecream.model;
 
 import android.databinding.ObservableArrayList;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableList;
 
 import com.google.firebase.database.DataSnapshot;
@@ -18,9 +19,11 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
 
     private Map<String, AssessmentRecord> stationIdToRecord = new HashMap<>();
     private ObservableList<String> stationIds = new ObservableArrayList<>();
+    private ObservableBoolean isLoading = new ObservableBoolean(false);
 
     @Override
     public void loadRecords() {
+        isLoading.set(true);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference("records")
                 .addListenerForSingleValueEvent(new RecordsValueEventListener());
@@ -39,6 +42,10 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
         return stationIds;
     }
 
+    public ObservableBoolean isLoading() {
+        return isLoading;
+    }
+
     @Override
     public AssessmentRecord getRecord(String stationId) {
         return stationIdToRecord.get(stationId);
@@ -48,6 +55,7 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
 
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
+            isLoading.set(false);
             stationIdToRecord.clear();
             stationIds.clear();
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -67,6 +75,7 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
         @Override
         public void onCancelled(DatabaseError databaseError) {
             //todo: handle records reading cancellation
+            isLoading.set(false);
         }
 
     }

@@ -87,6 +87,12 @@ public class AssessmentRecord extends BaseObservable {
         notifyPropertyChanged(BR.varianceDegree);
     }
 
+    public AssessmentRecord copy() {
+        AssessmentRecord copy = new AssessmentRecord();
+        copy.fillFrom(this);
+        return copy;
+    }
+
     public enum VarianceDegree {
         GOOD, NORMAL, BAD
     }

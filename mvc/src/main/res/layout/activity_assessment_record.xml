@@ -24,12 +24,18 @@
             name="sendButtonController"
             type="com.example.icecream.controller.SendButtonController"/>
 
+        <variable
+            name="refreshController"
+            type="com.example.icecream.controller.RefreshLayoutController"/>
+
     </data>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:onRefreshListener="@{refreshController::onRefresh}"
+        app:refreshing="@{recordsManager.isLoading}">
 
         <ScrollView
             android:layout_width="match_parent"
