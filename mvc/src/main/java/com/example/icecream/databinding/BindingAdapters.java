@@ -12,6 +12,7 @@ import com.example.icecream.R;
 import com.example.icecream.model.AssessmentRecord;
 import com.example.icecream.model.AssessmentRecordsManager;
 import com.example.icecream.view.ErrorHandlingView;
+import com.example.icecream.view.NetworkObserverView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -87,5 +88,10 @@ public class BindingAdapters {
     @BindingAdapter("handleError")
     public static void handleError(ErrorHandlingView view, AssessmentRecordsManager.Error error) {
         view.handleError(error);
+    }
+
+    @BindingAdapter("networkAvailability")
+    public static void setNetworkAvailability(NetworkObserverView view, boolean networkAvailable) {
+        view.setNetworkAvailable(networkAvailable);
     }
 }

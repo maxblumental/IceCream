@@ -16,7 +16,7 @@ import com.example.icecream.model.AssessmentRecordsManagerImpl;
 
 public class AssessmentRecordActivity extends AppCompatActivity {
 
-    private AssessmentRecordsManager recordsManager = new AssessmentRecordsManagerImpl();
+    private AssessmentRecordsManager recordsManager = new AssessmentRecordsManagerImpl(new NetworkStateImpl(this));
     private AssessmentRecord record = new AssessmentRecord();
 
     @Override

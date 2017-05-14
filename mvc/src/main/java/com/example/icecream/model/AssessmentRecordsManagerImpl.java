@@ -5,6 +5,7 @@ import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableList;
 
+import com.example.icecream.NetworkState;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
@@ -18,13 +19,23 @@ import java.util.Map;
 
 public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
 
+    private NetworkState networkState;
+
     private Map<String, AssessmentRecord> stationIdToRecord = new HashMap<>();
     private ObservableList<String> stationIds = new ObservableArrayList<>();
     private ObservableBoolean isLoading = new ObservableBoolean(false);
+    private ObservableBoolean isNetworkAvailable = new ObservableBoolean(true);
     private ObservableField<Error> error = new ObservableField<>();
+
+    public AssessmentRecordsManagerImpl(NetworkState networkState) {
+        this.networkState = networkState;
+    }
 
     @Override
     public void loadRecords() {
+        if (!ensureNetworkAvailability()) {
+            return;
+        }
         isLoading.set(true);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference("records")
@@ -33,6 +44,9 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
 
     @Override
     public void save(AssessmentRecord record) {
+        if (!ensureNetworkAvailability()) {
+            return;
+        }
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         Map<String, Object> map = Collections.<String, Object>singletonMap(record.stationId, record);
         database.getReference("records")
@@ -47,6 +61,11 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
     @Override
     public ObservableBoolean isLoading() {
         return isLoading;
+    }
+
+    @Override
+    public ObservableBoolean isNetworkAvailable() {
+        return isNetworkAvailable;
     }
 
     @Override
@@ -120,5 +139,11 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
     private void setError(Error error, Exception exception) {
         error.setException(exception);
         this.error.set(error);
+    }
+
+    private boolean ensureNetworkAvailability() {
+        boolean isAvailable = networkState.isNetworkAvailable();
+        isNetworkAvailable.set(isAvailable);
+        return isAvailable;
     }
 }

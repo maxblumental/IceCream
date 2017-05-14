@@ -112,6 +112,11 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:handleError="@{recordsManager.error}"/>
+
+                <com.example.icecream.view.NetworkObserverView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:networkAvailability="@{recordsManager.isNetworkAvailable}"/>
             </LinearLayout>
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
