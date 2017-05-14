@@ -42,7 +42,7 @@ public class BindingAdapters {
     }
 
     public interface OnItemSelectedListener {
-        void onItemSelected(int position);
+        void onItemSelected(Object item);
     }
 
     @BindingAdapter("itemSelectedListener")
@@ -52,7 +52,7 @@ public class BindingAdapters {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (itemSelectedListener != null) {
-                    itemSelectedListener.onItemSelected(position);
+                    itemSelectedListener.onItemSelected(parent.getSelectedItem());
                 }
             }
 

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.icecream.controller.ActualFieldControllerImpl;
+import com.example.icecream.controller.SendButtonControllerImpl;
 import com.example.icecream.controller.StationIdsSpinnerControllerImpl;
 import com.example.icecream.databinding.ActivityAssessmentRecordBinding;
 import com.example.icecream.model.AssessmentRecord;
@@ -26,6 +27,7 @@ public class AssessmentRecordActivity extends AppCompatActivity {
         binding.setRecord(record);
         binding.setActualController(new ActualFieldControllerImpl(record));
         binding.setStationIdsController(new StationIdsSpinnerControllerImpl(recordsManager, record));
+        binding.setSendButtonController(new SendButtonControllerImpl(recordsManager, record));
     }
 
     @Override

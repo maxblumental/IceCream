@@ -5,18 +5,18 @@ import com.example.icecream.model.AssessmentRecordsManager;
 
 public class StationIdsSpinnerControllerImpl implements StationIdsSpinnerController {
 
-    private AssessmentRecordsManager model;
-    private AssessmentRecord assessmentRecord;
+    private AssessmentRecordsManager recordsManager;
+    private AssessmentRecord record;
 
-    public StationIdsSpinnerControllerImpl(AssessmentRecordsManager model, AssessmentRecord assessmentRecord) {
-        this.model = model;
-        this.assessmentRecord = assessmentRecord;
+    public StationIdsSpinnerControllerImpl(AssessmentRecordsManager recordsManager,
+                                           AssessmentRecord record) {
+        this.recordsManager = recordsManager;
+        this.record = record;
     }
 
     @Override
-    public void onItemSelected(int position) {
-        String stationId = model.getStationIds().get(position);
-        AssessmentRecord record = model.getStationIdToRecord().get(stationId);
-        assessmentRecord.fillFrom(record);
+    public void onItemSelected(String stationId) {
+        AssessmentRecord record = recordsManager.getRecord(stationId);
+        this.record.fillFrom(record);
     }
 }

@@ -1,9 +1,7 @@
 package com.example.icecream.model;
 
 import android.databinding.ObservableArrayList;
-import android.databinding.ObservableArrayMap;
 import android.databinding.ObservableList;
-import android.databinding.ObservableMap;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -12,13 +10,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
 
-    private ObservableMap<String, AssessmentRecord> stationIdToRecord = new ObservableArrayMap<>();
+    private Map<String, AssessmentRecord> stationIdToRecord = new HashMap<>();
     private ObservableList<String> stationIds = new ObservableArrayList<>();
 
     @Override
@@ -29,20 +27,21 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
     }
 
     @Override
-    public void save(int position) {
-        AssessmentRecord record = stationIdToRecord.get(stationIds.get(position));
+    public void save(AssessmentRecord record) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         Map<String, Object> map = Collections.<String, Object>singletonMap(record.stationId, record);
         database.getReference("records")
                 .updateChildren(map, new RecordUpdateCompletionListener(record));
     }
 
+    @Override
     public ObservableList<String> getStationIds() {
         return stationIds;
     }
 
-    public ObservableMap<String, AssessmentRecord> getStationIdToRecord() {
-        return stationIdToRecord;
+    @Override
+    public AssessmentRecord getRecord(String stationId) {
+        return stationIdToRecord.get(stationId);
     }
 
     private class RecordsValueEventListener implements ValueEventListener {
@@ -50,6 +49,7 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             stationIdToRecord.clear();
+            stationIds.clear();
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 String key = snapshot.getKey();
                 AssessmentRecord record;
@@ -60,12 +60,8 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
                     return;
                 }
                 stationIdToRecord.put(key, record);
+                stationIds.add(key);
             }
-
-            ArrayList<String> list = new ArrayList<>(stationIdToRecord.keySet());
-            Collections.sort(list);
-            stationIds.clear();
-            stationIds.addAll(list);
         }
 
         @Override

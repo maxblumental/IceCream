@@ -20,6 +20,10 @@
             name="stationIdsController"
             type="com.example.icecream.controller.StationIdsSpinnerController"/>
 
+        <variable
+            name="sendButtonController"
+            type="com.example.icecream.controller.SendButtonController"/>
+
     </data>
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -45,7 +49,7 @@
                     android:orientation="vertical"
                     android:padding="8dp"
                     app:adapter="@{recordsManager.stationIds}"
-                    app:itemSelectedListener="@{stationIdsController::onItemSelected}"/>
+                    app:itemSelectedListener="@{(item) -> stationIdsController.onItemSelected((String)item)}"/>
 
                 <com.example.commonui.AssessmentRecordField
                     android:layout_width="match_parent"
@@ -95,6 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="8dp"
+                    android:onClick="@{() -> sendButtonController.onClick()}"
                     android:text="@string/send"/>
 
             </LinearLayout>
