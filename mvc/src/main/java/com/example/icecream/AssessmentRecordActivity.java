@@ -5,32 +5,28 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.example.icecream.controller.ActualFieldControllerImpl;
-import com.example.icecream.controller.RefreshLayoutControllerImpl;
-import com.example.icecream.controller.SendButtonControllerImpl;
-import com.example.icecream.controller.StationIdsSpinnerControllerImpl;
 import com.example.icecream.databinding.ActivityAssessmentRecordBinding;
+import com.example.icecream.di.assessment_record.AssessmentRecordModule;
+import com.example.icecream.di.assessment_record.AssessmentRecordSubcomponent;
 import com.example.icecream.model.AssessmentRecord;
 import com.example.icecream.model.AssessmentRecordsManager;
-import com.example.icecream.model.AssessmentRecordsManagerImpl;
+
+import javax.inject.Inject;
 
 public class AssessmentRecordActivity extends AppCompatActivity {
 
-    private AssessmentRecordsManager recordsManager = new AssessmentRecordsManagerImpl(new NetworkStateImpl(this));
-    private AssessmentRecord record = new AssessmentRecord();
+    @Inject
+    AssessmentRecordsManager recordsManager;
+
+    @Inject
+    AssessmentRecord record;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityAssessmentRecordBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_assessment_record);
-
-        binding.setRecordsManager(recordsManager);
-        binding.setRecord(record);
-        binding.setActualController(new ActualFieldControllerImpl(record));
-        binding.setStationIdsController(new StationIdsSpinnerControllerImpl(recordsManager, record));
-        binding.setSendButtonController(new SendButtonControllerImpl(recordsManager, record));
-        binding.setRefreshController(new RefreshLayoutControllerImpl(recordsManager));
+        initialize(binding);
     }
 
     @Override
@@ -41,5 +37,19 @@ public class AssessmentRecordActivity extends AppCompatActivity {
 
     public void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    private void initialize(ActivityAssessmentRecordBinding binding) {
+        AssessmentRecordSubcomponent subcomponent = IceCreamApplication.component
+                .plus(new AssessmentRecordModule());
+
+        subcomponent.inject(this);
+
+        binding.setRecordsManager(recordsManager);
+        binding.setRecord(record);
+        binding.setActualController(subcomponent.actualFieldController());
+        binding.setStationIdsController(subcomponent.stationIdsSpinnerController());
+        binding.setSendButtonController(subcomponent.sendButtonController());
+        binding.setRefreshController(subcomponent.refreshLayoutController());
     }
 }
