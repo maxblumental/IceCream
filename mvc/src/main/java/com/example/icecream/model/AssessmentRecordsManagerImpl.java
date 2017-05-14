@@ -2,6 +2,7 @@ package com.example.icecream.model;
 
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
+import android.databinding.ObservableField;
 import android.databinding.ObservableList;
 
 import com.google.firebase.database.DataSnapshot;
@@ -20,6 +21,7 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
     private Map<String, AssessmentRecord> stationIdToRecord = new HashMap<>();
     private ObservableList<String> stationIds = new ObservableArrayList<>();
     private ObservableBoolean isLoading = new ObservableBoolean(false);
+    private ObservableField<Error> error = new ObservableField<>();
 
     @Override
     public void loadRecords() {
@@ -42,6 +44,7 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
         return stationIds;
     }
 
+    @Override
     public ObservableBoolean isLoading() {
         return isLoading;
     }
@@ -49,6 +52,11 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
     @Override
     public AssessmentRecord getRecord(String stationId) {
         return stationIdToRecord.get(stationId);
+    }
+
+    @Override
+    public ObservableField<Error> getError() {
+        return error;
     }
 
     private class RecordsValueEventListener implements ValueEventListener {
@@ -64,7 +72,7 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
                 try {
                     record = snapshot.getValue(AssessmentRecord.class);
                 } catch (DatabaseException e) {
-                    //todo: handle snapshot conversion to assessment record
+                    setRecordsLoadError(e);
                     return;
                 }
                 stationIdToRecord.put(key, record);
@@ -74,10 +82,13 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
-            //todo: handle records reading cancellation
             isLoading.set(false);
+            setRecordsLoadError(databaseError.toException());
         }
 
+        private void setRecordsLoadError(Exception exception) {
+            setError(Error.RECORDS_LOAD_ERROR, exception);
+        }
     }
 
     private class RecordUpdateCompletionListener implements DatabaseReference.CompletionListener {
@@ -91,7 +102,7 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
         @Override
         public void onComplete(DatabaseError error, DatabaseReference reference) {
             if (error != null) {
-                //todo: handle error
+                setSaveRecordError(error.toException());
                 return;
             }
             updateSessionState();
@@ -100,5 +111,14 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
         private void updateSessionState() {
             stationIdToRecord.put(record.stationId, record);
         }
+
+        private void setSaveRecordError(Exception exception) {
+            setError(Error.SAVE_RECORD_ERROR, exception);
+        }
+    }
+
+    private void setError(Error error, Exception exception) {
+        error.setException(exception);
+        this.error.set(error);
     }
 }

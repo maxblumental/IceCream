@@ -10,6 +10,8 @@ import android.widget.Spinner;
 import com.example.commonui.AssessmentRecordField;
 import com.example.icecream.R;
 import com.example.icecream.model.AssessmentRecord;
+import com.example.icecream.model.AssessmentRecordsManager;
+import com.example.icecream.view.ErrorHandlingView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -80,5 +82,10 @@ public class BindingAdapters {
                 color = R.color.normalVarianceDegree;
         }
         field.setValueColor(color);
+    }
+
+    @BindingAdapter("handleError")
+    public static void handleError(ErrorHandlingView view, AssessmentRecordsManager.Error error) {
+        view.handleError(error);
     }
 }

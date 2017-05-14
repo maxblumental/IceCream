@@ -3,6 +3,7 @@ package com.example.icecream;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.example.icecream.controller.ActualFieldControllerImpl;
 import com.example.icecream.controller.RefreshLayoutControllerImpl;
@@ -36,5 +37,9 @@ public class AssessmentRecordActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         recordsManager.loadRecords();
+    }
+
+    public void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }

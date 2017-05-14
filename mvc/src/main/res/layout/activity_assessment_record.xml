@@ -108,6 +108,10 @@
                     android:onClick="@{() -> sendButtonController.onClick()}"
                     android:text="@string/send"/>
 
+                <com.example.icecream.view.ErrorHandlingView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:handleError="@{recordsManager.error}"/>
             </LinearLayout>
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
