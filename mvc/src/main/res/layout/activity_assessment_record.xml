@@ -13,6 +13,10 @@
             type="com.example.icecream.model.AssessmentRecord"/>
 
         <variable
+            name="network"
+            type="com.example.icecream.NetworkState"/>
+
+        <variable
             name="actualController"
             type="com.example.icecream.controller.ActualFieldController"/>
 
@@ -116,7 +120,7 @@
                 <com.example.icecream.view.NetworkObserverView
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    app:networkAvailability="@{recordsManager.isNetworkAvailable}"/>
+                    app:networkAvailability="@{network.isNetworkAvailable}"/>
             </LinearLayout>
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>

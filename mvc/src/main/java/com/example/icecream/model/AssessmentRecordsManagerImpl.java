@@ -24,7 +24,6 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
     private Map<String, AssessmentRecord> stationIdToRecord = new HashMap<>();
     private ObservableList<String> stationIds = new ObservableArrayList<>();
     private ObservableBoolean isLoading = new ObservableBoolean(false);
-    private ObservableBoolean isNetworkAvailable = new ObservableBoolean(true);
     private ObservableField<Error> error = new ObservableField<>();
 
     public AssessmentRecordsManagerImpl(NetworkState networkState) {
@@ -33,10 +32,11 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
 
     @Override
     public void loadRecords() {
-        if (!ensureNetworkAvailability()) {
+        isLoading.set(true);
+        if (!networkState.checkNetworkAvailability()) {
+            isLoading.set(false);
             return;
         }
-        isLoading.set(true);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.getReference("records")
                 .addListenerForSingleValueEvent(new RecordsValueEventListener());
@@ -44,7 +44,9 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
 
     @Override
     public void save(AssessmentRecord record) {
-        if (!ensureNetworkAvailability()) {
+        isLoading.set(true);
+        if (!networkState.checkNetworkAvailability()) {
+            isLoading.set(false);
             return;
         }
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -61,11 +63,6 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
     @Override
     public ObservableBoolean isLoading() {
         return isLoading;
-    }
-
-    @Override
-    public ObservableBoolean isNetworkAvailable() {
-        return isNetworkAvailable;
     }
 
     @Override
@@ -139,11 +136,5 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
     private void setError(Error error, Exception exception) {
         error.setException(exception);
         this.error.set(error);
-    }
-
-    private boolean ensureNetworkAvailability() {
-        boolean isAvailable = networkState.isNetworkAvailable();
-        isNetworkAvailable.set(isAvailable);
-        return isAvailable;
     }
 }

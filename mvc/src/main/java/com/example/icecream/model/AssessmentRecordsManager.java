@@ -14,8 +14,6 @@ public interface AssessmentRecordsManager {
 
     ObservableBoolean isLoading();
 
-    ObservableBoolean isNetworkAvailable();
-
     AssessmentRecord getRecord(String stationId);
 
     ObservableField<Error> getError();

@@ -1,5 +1,10 @@
 package com.example.icecream;
 
+import android.databinding.ObservableBoolean;
+
 public interface NetworkState {
-    boolean isNetworkAvailable();
+
+    boolean checkNetworkAvailability();
+
+    ObservableBoolean isNetworkAvailable();
 }

@@ -21,6 +21,9 @@ public class AssessmentRecordActivity extends AppCompatActivity {
     @Inject
     AssessmentRecord record;
 
+    @Inject
+    NetworkState networkState;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,5 +54,6 @@ public class AssessmentRecordActivity extends AppCompatActivity {
         binding.setStationIdsController(subcomponent.stationIdsSpinnerController());
         binding.setSendButtonController(subcomponent.sendButtonController());
         binding.setRefreshController(subcomponent.refreshLayoutController());
+        binding.setNetwork(networkState);
     }
 }
