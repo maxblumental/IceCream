@@ -1,10 +1,10 @@
 package com.example.icecream.model;
 
-import android.databinding.ObservableArrayList;
+import android.databinding.BaseObservable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
-import android.databinding.ObservableList;
 
+import com.example.icecream.BR;
 import com.example.icecream.NetworkState;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -13,16 +13,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
+public class AssessmentRecordsManagerImpl extends BaseObservable implements AssessmentRecordsManager {
 
     private NetworkState networkState;
 
-    private Map<String, AssessmentRecord> stationIdToRecord = new HashMap<>();
-    private ObservableList<String> stationIds = new ObservableArrayList<>();
+    private Map<String, AssessmentRecord> stationIdToRecord;
     private ObservableBoolean isLoading = new ObservableBoolean(false);
     private ObservableField<Error> error = new ObservableField<>();
 
@@ -44,9 +45,7 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
 
     @Override
     public void save(AssessmentRecord record) {
-        isLoading.set(true);
         if (!networkState.checkNetworkAvailability()) {
-            isLoading.set(false);
             return;
         }
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -56,8 +55,11 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
     }
 
     @Override
-    public ObservableList<String> getStationIds() {
-        return stationIds;
+    public List<String> getStationIds() {
+        if (stationIdToRecord == null) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<>(stationIdToRecord.keySet());
     }
 
     @Override
@@ -80,8 +82,7 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             isLoading.set(false);
-            stationIdToRecord.clear();
-            stationIds.clear();
+            stationIdToRecord = new LinkedHashMap<>();
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 String key = snapshot.getKey();
                 AssessmentRecord record;
@@ -92,8 +93,8 @@ public class AssessmentRecordsManagerImpl implements AssessmentRecordsManager {
                     return;
                 }
                 stationIdToRecord.put(key, record);
-                stationIds.add(key);
             }
+            notifyPropertyChanged(BR.stationIds);
         }
 
         @Override

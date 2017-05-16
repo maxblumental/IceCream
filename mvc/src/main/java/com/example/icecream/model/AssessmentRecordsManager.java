@@ -1,16 +1,20 @@
 package com.example.icecream.model;
 
+import android.databinding.Bindable;
+import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
-import android.databinding.ObservableList;
 
-public interface AssessmentRecordsManager {
+import java.util.List;
+
+public interface AssessmentRecordsManager extends Observable {
 
     void loadRecords();
 
     void save(AssessmentRecord record);
 
-    ObservableList<String> getStationIds();
+    @Bindable
+    List<String> getStationIds();
 
     ObservableBoolean isLoading();
 
