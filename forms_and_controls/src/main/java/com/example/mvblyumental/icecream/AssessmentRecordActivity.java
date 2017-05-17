@@ -7,16 +7,14 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.commonui.AssessmentRecordField;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
@@ -36,11 +34,11 @@ import static com.example.mvblyumental.icecream.R.id.stationId;
 public class AssessmentRecordActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private Spinner stationsSpinner;
-    private EditText stationIdEditText;
-    private EditText targetEditText;
-    private EditText actualEditText;
-    private EditText varianceEditText;
-    private EditText dateEditText;
+    private AssessmentRecordField stationIdField;
+    private AssessmentRecordField targetField;
+    private AssessmentRecordField actualField;
+    private AssessmentRecordField varianceField;
+    private AssessmentRecordField dateField;
     private Button sendButton;
     private SwipeRefreshLayout refreshLayout;
 
@@ -74,17 +72,17 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
 
     private void findViews() {
         stationsSpinner = (Spinner) findViewById(R.id.spinner);
-        stationIdEditText = (EditText) findViewById(stationId);
-        targetEditText = (EditText) findViewById(R.id.target);
-        actualEditText = (EditText) findViewById(R.id.actual);
-        varianceEditText = (EditText) findViewById(R.id.variance);
-        dateEditText = (EditText) findViewById(R.id.date);
+        stationIdField = (AssessmentRecordField) findViewById(stationId);
+        targetField = (AssessmentRecordField) findViewById(R.id.target);
+        actualField = (AssessmentRecordField) findViewById(R.id.actual);
+        varianceField = (AssessmentRecordField) findViewById(R.id.variance);
+        dateField = (AssessmentRecordField) findViewById(R.id.date);
         sendButton = (Button) findViewById(R.id.sendButton);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
     }
 
     private void setListeners() {
-        actualEditText.addTextChangedListener(new ActualFieldTextWatcher());
+        actualField.setOnValueChangeListener(new ActualFieldValueChangeListener());
         sendButton.setOnClickListener(new SendButtonClickListener());
         stationsSpinner.setOnItemSelectedListener(new StationsSpinnerItemSelectedListener());
         refreshLayout.setOnRefreshListener(this);
@@ -115,40 +113,30 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
         initializeStationsSpinner();
     }
 
-    private class ActualFieldTextWatcher implements TextWatcher {
+    private class ActualFieldValueChangeListener implements AssessmentRecordField.ValueChangeListener {
 
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
+        public void onChange(String value) {
             int variance = calculateNewVariance();
             setVarianceValue(variance);
             updateVarianceColor(variance);
         }
 
         private int calculateNewVariance() {
-            int actual = readIntegerField(actualEditText);
-            int target = readIntegerField(targetEditText);
+            int actual = readIntegerField(actualField);
+            int target = readIntegerField(targetField);
             return actual - target;
         }
 
         private void setVarianceValue(int variance) {
             String varianceText = String.format(locale, "%d", variance);
-            varianceEditText.setText(varianceText);
+            varianceField.setText(varianceText);
         }
 
         private void updateVarianceColor(int variance) {
-            int target = readIntegerField(targetEditText);
+            int target = readIntegerField(targetField);
             int color = determineVarianceColor(variance, target);
-            varianceEditText.setTextColor(color);
+            varianceField.setValueColor(color);
         }
 
         private int determineVarianceColor(int variance, int target) {
@@ -163,7 +151,6 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
             }
             return color;
         }
-
     }
 
     private class SendButtonClickListener implements View.OnClickListener {
@@ -175,9 +162,9 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
         }
 
         private AssessmentRecord readAssessmentRecord() {
-            String stationId = stationIdEditText.getText().toString();
-            int actual = readIntegerField(actualEditText);
-            int variance = readIntegerField(varianceEditText);
+            String stationId = stationIdField.getText();
+            int actual = readIntegerField(actualField);
+            int variance = readIntegerField(varianceField);
             return new AssessmentRecord(stationId, actual, variance);
         }
 
@@ -264,15 +251,15 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
     private void updateFields(AssessmentRecord record) {
         String dateText = new SimpleDateFormat("HH:mm MM/dd/yy", locale).format(record.date);
 
-        stationIdEditText.setText(record.stationId);
-        dateEditText.setText(dateText);
-        targetEditText.setText(String.format(locale, "%d", record.target));
-        actualEditText.setText(String.format(locale, "%d", record.actual));
-        varianceEditText.setText(String.format(locale, "%d", record.variance));
+        stationIdField.setText(record.stationId);
+        dateField.setText(dateText);
+        targetField.setText(String.format(locale, "%d", record.target));
+        actualField.setText(String.format(locale, "%d", record.actual));
+        varianceField.setText(String.format(locale, "%d", record.variance));
     }
 
-    private int readIntegerField(EditText field) {
-        String actualText = field.getText().toString();
+    private int readIntegerField(AssessmentRecordField field) {
+        String actualText = field.getText();
         int value;
         try {
             value = Integer.parseInt(actualText);

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/refreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -24,114 +25,45 @@
                 android:orientation="vertical"
                 android:padding="8dp"/>
 
-            <LinearLayout
+            <com.example.commonui.AssessmentRecordField
+                android:id="@+id/stationId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp">
+                android:layout_margin="8dp"
+                app:enabled="false"
+                app:fieldName="@string/station_id"/>
 
-                <TextView
-                    style="@style/FieldName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/station_id"/>
-
-                <EditText
-                    android:id="@+id/stationId"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:enabled="false"
-                    android:inputType="text"/>
-
-            </LinearLayout>
-
-            <LinearLayout
+            <com.example.commonui.AssessmentRecordField
+                android:id="@+id/date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp">
+                android:layout_margin="8dp"
+                app:enabled="false"
+                app:fieldName="@string/date"/>
 
-                <TextView
-                    style="@style/FieldName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/date"/>
-
-                <EditText
-                    android:id="@+id/date"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:enabled="false"
-                    android:inputType="date"/>
-
-            </LinearLayout>
-
-            <LinearLayout
+            <com.example.commonui.AssessmentRecordField
+                android:id="@+id/target"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp">
+                android:layout_margin="8dp"
+                app:enabled="false"
+                app:fieldName="@string/target"/>
 
-                <TextView
-                    style="@style/FieldName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/target"/>
-
-                <EditText
-                    android:id="@+id/target"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:enabled="false"
-                    android:inputType="numberDecimal"/>
-
-            </LinearLayout>
-
-            <LinearLayout
+            <com.example.commonui.AssessmentRecordField
+                android:id="@+id/actual"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp">
+                android:layout_margin="8dp"
+                app:fieldName="@string/actual"
+                app:inputType="decimal"/>
 
-                <TextView
-                    style="@style/FieldName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/actual"/>
-
-                <EditText
-                    android:id="@+id/actual"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:inputType="numberDecimal"/>
-
-            </LinearLayout>
-
-            <LinearLayout
+            <com.example.commonui.AssessmentRecordField
+                android:id="@+id/variance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp">
-
-                <TextView
-                    style="@style/FieldName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/variance"/>
-
-                <EditText
-                    android:id="@+id/variance"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:enabled="false"
-                    android:inputType="numberDecimal"/>
-
-            </LinearLayout>
+                android:layout_margin="8dp"
+                app:enabled="false"
+                app:fieldName="@string/variance"/>
 
             <Button
                 android:id="@+id/sendButton"
