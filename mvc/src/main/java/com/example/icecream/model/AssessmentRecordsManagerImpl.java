@@ -3,6 +3,7 @@ package com.example.icecream.model;
 import android.databinding.BaseObservable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
+import android.os.Bundle;
 
 import com.example.icecream.BR;
 import com.example.icecream.NetworkState;
@@ -21,18 +22,35 @@ import java.util.Map;
 
 public class AssessmentRecordsManagerImpl extends BaseObservable implements AssessmentRecordsManager {
 
+    private final String KEY_RECORDS = "key_records";
+
     private NetworkState networkState;
 
-    private Map<String, AssessmentRecord> stationIdToRecord;
+    private LinkedHashMap<String, AssessmentRecord> stationIdToRecord;
     private ObservableBoolean isLoading = new ObservableBoolean(false);
     private ObservableField<Error> error = new ObservableField<>();
 
-    public AssessmentRecordsManagerImpl(NetworkState networkState) {
+    @SuppressWarnings("unchecked")
+    public AssessmentRecordsManagerImpl(NetworkState networkState, Bundle savedState) {
         this.networkState = networkState;
+        if (savedState != null) {
+            stationIdToRecord = (LinkedHashMap<String, AssessmentRecord>) savedState.getSerializable(KEY_RECORDS);
+        }
     }
 
     @Override
     public void loadRecords() {
+        if (stationIdToRecord == null) {
+            loadRecordsFromServer();
+        }
+    }
+
+    @Override
+    public void reloadRecords() {
+        loadRecordsFromServer();
+    }
+
+    private void loadRecordsFromServer() {
         isLoading.set(true);
         if (!networkState.checkNetworkAvailability()) {
             isLoading.set(false);
@@ -70,6 +88,13 @@ public class AssessmentRecordsManagerImpl extends BaseObservable implements Asse
     @Override
     public AssessmentRecord getRecord(String stationId) {
         return stationIdToRecord.get(stationId);
+    }
+
+    @Override
+    public Bundle getSavedState() {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_RECORDS, stationIdToRecord);
+        return bundle;
     }
 
     @Override

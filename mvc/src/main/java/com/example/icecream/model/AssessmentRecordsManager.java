@@ -4,12 +4,15 @@ import android.databinding.Bindable;
 import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
+import android.os.Bundle;
 
 import java.util.List;
 
 public interface AssessmentRecordsManager extends Observable {
 
     void loadRecords();
+
+    void reloadRecords();
 
     void save(AssessmentRecord record);
 
@@ -19,6 +22,8 @@ public interface AssessmentRecordsManager extends Observable {
     ObservableBoolean isLoading();
 
     AssessmentRecord getRecord(String stationId);
+
+    Bundle getSavedState();
 
     ObservableField<Error> getError();
 

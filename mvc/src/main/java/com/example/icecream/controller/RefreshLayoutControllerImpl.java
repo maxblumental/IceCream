@@ -12,6 +12,6 @@ public class RefreshLayoutControllerImpl implements RefreshLayoutController {
 
     @Override
     public void onRefresh() {
-        recordsManager.loadRecords();
+        recordsManager.reloadRecords();
     }
 }

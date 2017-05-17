@@ -1,5 +1,7 @@
 package com.example.icecream.di.assessment_record;
 
+import android.os.Bundle;
+
 import com.example.icecream.NetworkState;
 import com.example.icecream.di.PerActivity;
 import com.example.icecream.model.AssessmentRecord;
@@ -12,6 +14,12 @@ import dagger.Provides;
 @Module
 public class ModelModule {
 
+    private Bundle savedState;
+
+    public ModelModule(Bundle savedState) {
+        this.savedState = savedState;
+    }
+
     @Provides
     @PerActivity
     AssessmentRecord provideAssessmentRecord() {
@@ -21,6 +29,6 @@ public class ModelModule {
     @Provides
     @PerActivity
     AssessmentRecordsManager provideAssessmentRecordsManager(NetworkState networkState) {
-        return new AssessmentRecordsManagerImpl(networkState);
+        return new AssessmentRecordsManagerImpl(networkState, savedState);
     }
 }

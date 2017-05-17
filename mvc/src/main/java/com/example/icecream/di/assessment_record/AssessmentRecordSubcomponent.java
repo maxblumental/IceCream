@@ -9,7 +9,7 @@ import com.example.icecream.di.PerActivity;
 
 import dagger.Subcomponent;
 
-@Subcomponent(modules = {AssessmentRecordModule.class})
+@Subcomponent(modules = {ControllerModule.class, ModelModule.class})
 @PerActivity
 public interface AssessmentRecordSubcomponent {
 
