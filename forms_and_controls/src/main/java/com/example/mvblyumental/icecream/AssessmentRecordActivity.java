@@ -27,9 +27,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import static com.example.mvblyumental.icecream.R.id.stationId;
 
 public class AssessmentRecordActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -42,12 +44,10 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
     private Button sendButton;
     private SwipeRefreshLayout refreshLayout;
 
-    private Map<String, AssessmentRecord> stationIdToRecord = new HashMap<>();
-    private ArrayList<String> stationIds = new ArrayList<>();
+    private LinkedHashMap<String, AssessmentRecord> stationIdToRecord = new LinkedHashMap<>();
     private final Locale locale = Locale.ENGLISH;
 
     private final String KEY_ASSESSMENT_RECORDS = "key_assessment_records";
-    private final String KEY_STATION_IDS = "key_station_ids";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +63,7 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (isChangingConfigurations()) {
-            ArrayList<AssessmentRecord> list = new ArrayList<>(stationIdToRecord.values());
-            outState.putParcelableArrayList(KEY_ASSESSMENT_RECORDS, list);
-            outState.putStringArrayList(KEY_STATION_IDS, stationIds);
+            outState.putSerializable(KEY_ASSESSMENT_RECORDS, stationIdToRecord);
         }
     }
 
@@ -76,7 +74,7 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
 
     private void findViews() {
         stationsSpinner = (Spinner) findViewById(R.id.spinner);
-        stationIdEditText = (EditText) findViewById(R.id.stationId);
+        stationIdEditText = (EditText) findViewById(stationId);
         targetEditText = (EditText) findViewById(R.id.target);
         actualEditText = (EditText) findViewById(R.id.actual);
         varianceEditText = (EditText) findViewById(R.id.variance);
@@ -94,8 +92,7 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
 
     private void initializeScreen(Bundle savedInstanceState) {
         if (savedInstanceState == null
-                || !savedInstanceState.containsKey(KEY_ASSESSMENT_RECORDS)
-                || !savedInstanceState.containsKey(KEY_STATION_IDS)) {
+                || !savedInstanceState.containsKey(KEY_ASSESSMENT_RECORDS)) {
             loadRecords();
         } else {
             restoreSessionState(savedInstanceState);
@@ -112,13 +109,9 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
                 .addListenerForSingleValueEvent(new RecordsValueEventListener());
     }
 
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "unchecked"})
     private void restoreSessionState(Bundle savedInstanceState) {
-        stationIds = savedInstanceState.getStringArrayList(KEY_STATION_IDS);
-        ArrayList<AssessmentRecord> records = savedInstanceState.getParcelableArrayList(KEY_ASSESSMENT_RECORDS);
-        for (AssessmentRecord record : records) {
-            stationIdToRecord.put(record.stationId, record);
-        }
+        stationIdToRecord = (LinkedHashMap<String, AssessmentRecord>) savedInstanceState.getSerializable(KEY_ASSESSMENT_RECORDS);
         initializeStationsSpinner();
     }
 
@@ -242,9 +235,6 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
                 stationIdToRecord.put(key, record);
             }
 
-            stationIds = new ArrayList<>(stationIdToRecord.keySet());
-            Collections.sort(stationIds);
-
             initializeStationsSpinner();
         }
 
@@ -259,7 +249,7 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            String stationId = stationIds.get(position);
+            String stationId = (String) parent.getSelectedItem();
             AssessmentRecord record = stationIdToRecord.get(stationId);
             updateFields(record);
         }
@@ -293,8 +283,9 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
     }
 
     private void initializeStationsSpinner() {
+        ArrayList<String> list = new ArrayList<>(stationIdToRecord.keySet());
         ArrayAdapter<String> adapter = new ArrayAdapter<>(AssessmentRecordActivity.this,
-                android.R.layout.simple_list_item_1, stationIds);
+                android.R.layout.simple_list_item_1, list);
         stationsSpinner.setAdapter(adapter);
     }
 
