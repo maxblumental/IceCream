@@ -63,7 +63,7 @@ public class AssessmentRecordsManagerImpl extends BaseObservable implements Asse
         if (!networkStateMonitor.checkNetworkAvailability()) {
             return;
         }
-        remoteStorage.updateRecord(record, new RecordUpdateCompletionListenerImpl());
+        remoteStorage.updateRecord(record, new RecordUpdateCompletionListenerImpl(record));
     }
 
     @Override
@@ -114,8 +114,14 @@ public class AssessmentRecordsManagerImpl extends BaseObservable implements Asse
 
     private class RecordUpdateCompletionListenerImpl implements RemoteStorage.RecordUpdateCompletionListener {
 
+        private AssessmentRecord record;
+
+        RecordUpdateCompletionListenerImpl(AssessmentRecord record) {
+            this.record = record;
+        }
+
         @Override
-        public void onComplete(AssessmentRecord record) {
+        public void onComplete() {
             stationIdToRecord.put(record.stationId, record);
         }
 

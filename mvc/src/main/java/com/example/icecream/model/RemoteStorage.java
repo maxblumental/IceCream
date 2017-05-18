@@ -17,7 +17,7 @@ public interface RemoteStorage {
 
     interface RecordUpdateCompletionListener {
 
-        void onComplete(AssessmentRecord updatedRecord);
+        void onComplete();
 
         void onError(Exception e);
     }

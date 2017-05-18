@@ -26,7 +26,7 @@ public class FirebaseRemoteStorage implements RemoteStorage {
         Map<String, Object> recordUpdate =
                 Collections.<String, Object>singletonMap(record.stationId, record);
         database.getReference("records")
-                .updateChildren(recordUpdate, new RecordUpdateListener(listener, record));
+                .updateChildren(recordUpdate, new RecordUpdateListener(listener));
     }
 
     private class RecordsValueEventListener implements ValueEventListener {
@@ -62,11 +62,9 @@ public class FirebaseRemoteStorage implements RemoteStorage {
     private class RecordUpdateListener implements DatabaseReference.CompletionListener {
 
         private RecordUpdateCompletionListener listener;
-        private AssessmentRecord record;
 
-        RecordUpdateListener(RecordUpdateCompletionListener listener, AssessmentRecord record) {
+        RecordUpdateListener(RecordUpdateCompletionListener listener) {
             this.listener = listener;
-            this.record = record;
         }
 
         @Override
@@ -76,7 +74,7 @@ public class FirebaseRemoteStorage implements RemoteStorage {
                 return;
             }
 
-            listener.onComplete(record);
+            listener.onComplete();
         }
     }
 }
