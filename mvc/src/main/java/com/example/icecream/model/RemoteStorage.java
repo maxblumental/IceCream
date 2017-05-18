@@ -2,7 +2,7 @@ package com.example.icecream.model;
 
 import java.util.Map;
 
-public interface DatabaseWrapper {
+public interface RemoteStorage {
 
     void getRecords(RecordsQueryListener listener);
 

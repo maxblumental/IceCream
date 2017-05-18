@@ -2,8 +2,7 @@ package com.example.icecream.di.assessment_record;
 
 import android.os.Bundle;
 
-import com.example.icecream.model.DatabaseWrapper;
-import com.example.icecream.network.NetworkState;
+import com.example.icecream.model.RemoteStorage;
 import com.example.icecream.di.PerActivity;
 import com.example.icecream.model.AssessmentRecord;
 import com.example.icecream.model.AssessmentRecordsManager;
@@ -31,7 +30,7 @@ public class ModelModule {
     @Provides
     @PerActivity
     AssessmentRecordsManager provideAssessmentRecordsManager(NetworkStateMonitor networkStateMonitor,
-                                                             DatabaseWrapper databaseWrapper) {
-        return new AssessmentRecordsManagerImpl(networkStateMonitor, databaseWrapper, savedState);
+                                                             RemoteStorage remoteStorage) {
+        return new AssessmentRecordsManagerImpl(networkStateMonitor, remoteStorage, savedState);
     }
 }

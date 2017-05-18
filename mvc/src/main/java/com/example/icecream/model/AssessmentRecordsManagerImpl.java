@@ -20,7 +20,7 @@ public class AssessmentRecordsManagerImpl extends BaseObservable implements Asse
     private final String KEY_RECORDS = "key_records";
 
     private NetworkStateMonitor networkStateMonitor;
-    private DatabaseWrapper database;
+    private RemoteStorage remoteStorage;
 
     private Map<String, AssessmentRecord> stationIdToRecord;
     private ObservableBoolean isLoading = new ObservableBoolean(false);
@@ -28,10 +28,10 @@ public class AssessmentRecordsManagerImpl extends BaseObservable implements Asse
 
     @SuppressWarnings("unchecked")
     public AssessmentRecordsManagerImpl(NetworkStateMonitor networkStateMonitor,
-                                        DatabaseWrapper database,
+                                        RemoteStorage remoteStorage,
                                         @Nullable Bundle savedState) {
         this.networkStateMonitor = networkStateMonitor;
-        this.database = database;
+        this.remoteStorage = remoteStorage;
         if (savedState != null && savedState.containsKey(KEY_RECORDS)) {
             stationIdToRecord = (Map<String, AssessmentRecord>) savedState.getSerializable(KEY_RECORDS);
         }
@@ -55,7 +55,7 @@ public class AssessmentRecordsManagerImpl extends BaseObservable implements Asse
             isLoading.set(false);
             return;
         }
-        database.getRecords(new RecordsQueryListenerImpl());
+        remoteStorage.getRecords(new RecordsQueryListenerImpl());
     }
 
     @Override
@@ -63,7 +63,7 @@ public class AssessmentRecordsManagerImpl extends BaseObservable implements Asse
         if (!networkStateMonitor.checkNetworkAvailability()) {
             return;
         }
-        database.updateRecord(record, new RecordUpdateCompletionListenerImpl());
+        remoteStorage.updateRecord(record, new RecordUpdateCompletionListenerImpl());
     }
 
     @Override
@@ -96,7 +96,7 @@ public class AssessmentRecordsManagerImpl extends BaseObservable implements Asse
         return error;
     }
 
-    private class RecordsQueryListenerImpl implements DatabaseWrapper.RecordsQueryListener {
+    private class RecordsQueryListenerImpl implements RemoteStorage.RecordsQueryListener {
 
         @Override
         public void onResult(Map<String, AssessmentRecord> recordMap) {
@@ -112,7 +112,7 @@ public class AssessmentRecordsManagerImpl extends BaseObservable implements Asse
         }
     }
 
-    private class RecordUpdateCompletionListenerImpl implements DatabaseWrapper.RecordUpdateCompletionListener {
+    private class RecordUpdateCompletionListenerImpl implements RemoteStorage.RecordUpdateCompletionListener {
 
         @Override
         public void onComplete(AssessmentRecord record) {

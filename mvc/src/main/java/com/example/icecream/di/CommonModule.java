@@ -2,10 +2,10 @@ package com.example.icecream.di;
 
 import android.content.Context;
 
+import com.example.icecream.model.RemoteStorage;
 import com.example.icecream.network.NetworkState;
 import com.example.icecream.network.NetworkStateImpl;
-import com.example.icecream.model.DatabaseWrapper;
-import com.example.icecream.model.FirebaseDatabaseWrapper;
+import com.example.icecream.model.FirebaseRemoteStorage;
 import com.example.icecream.network.NetworkStateIndicator;
 import com.example.icecream.network.NetworkStateMonitor;
 
@@ -43,7 +43,7 @@ public class CommonModule {
 
     @Singleton
     @Provides
-    DatabaseWrapper provideFirebaseWrapper() {
-        return new FirebaseDatabaseWrapper();
+    RemoteStorage provideRemoteStorage() {
+        return new FirebaseRemoteStorage();
     }
 }
