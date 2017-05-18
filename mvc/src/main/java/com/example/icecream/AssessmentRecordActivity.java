@@ -11,6 +11,7 @@ import com.example.icecream.di.assessment_record.ControllerModule;
 import com.example.icecream.di.assessment_record.ModelModule;
 import com.example.icecream.model.AssessmentRecord;
 import com.example.icecream.model.AssessmentRecordsManager;
+import com.example.icecream.network.NetworkStateIndicator;
 
 import javax.inject.Inject;
 
@@ -25,7 +26,7 @@ public class AssessmentRecordActivity extends AppCompatActivity {
     AssessmentRecord record;
 
     @Inject
-    NetworkState networkState;
+    NetworkStateIndicator networkStateIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,6 @@ public class AssessmentRecordActivity extends AppCompatActivity {
         binding.setStationIdsController(subcomponent.stationIdsSpinnerController());
         binding.setSendButtonController(subcomponent.sendButtonController());
         binding.setRefreshController(subcomponent.refreshLayoutController());
-        binding.setNetwork(networkState);
+        binding.setNetwork(networkStateIndicator);
     }
 }

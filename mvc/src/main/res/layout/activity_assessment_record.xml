@@ -14,7 +14,7 @@
 
         <variable
             name="network"
-            type="com.example.icecream.NetworkState"/>
+            type="com.example.icecream.network.NetworkStateIndicator"/>
 
         <variable
             name="actualController"

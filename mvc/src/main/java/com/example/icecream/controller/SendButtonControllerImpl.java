@@ -19,6 +19,6 @@ public class SendButtonControllerImpl implements SendButtonController {
     @Override
     public void onClick() {
         record.setDate(new Date());
-        recordsManager.save(record.copy());
+        recordsManager.update(record.copy());
     }
 }

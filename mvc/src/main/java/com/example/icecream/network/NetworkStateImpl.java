@@ -1,4 +1,4 @@
-package com.example.icecream;
+package com.example.icecream.network;
 
 import android.content.Context;
 import android.databinding.ObservableBoolean;

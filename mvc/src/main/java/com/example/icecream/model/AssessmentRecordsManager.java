@@ -14,22 +14,22 @@ public interface AssessmentRecordsManager extends Observable {
 
     void reloadRecords();
 
-    void save(AssessmentRecord record);
+    void update(AssessmentRecord record);
+
+    AssessmentRecord getRecord(String stationId);
 
     @Bindable
     List<String> getStationIds();
 
-    ObservableBoolean isLoading();
-
-    AssessmentRecord getRecord(String stationId);
-
     Bundle getSavedState();
+
+    ObservableBoolean isLoading();
 
     ObservableField<Error> getError();
 
     enum Error {
         RECORDS_LOAD_ERROR,
-        SAVE_RECORD_ERROR;
+        UPDATE_RECORD_ERROR;
 
         private Exception exception;
 
