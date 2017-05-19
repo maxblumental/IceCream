@@ -1,7 +1,6 @@
 package com.example.mvblyumental.icecream;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -15,17 +14,14 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.commonui.AssessmentRecordField;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseException;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.example.firebasedb.AssessmentRecord;
+import com.example.firebasedb.FirebaseRemoteStorage;
+import com.example.firebasedb.RemoteStorage;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
@@ -42,8 +38,10 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
     private Button sendButton;
     private SwipeRefreshLayout refreshLayout;
 
-    private LinkedHashMap<String, AssessmentRecord> stationIdToRecord = new LinkedHashMap<>();
+    private Map<String, AssessmentRecord> stationIdToRecord;
     private final Locale locale = Locale.ENGLISH;
+
+    private RemoteStorage remoteStorage;
 
     private final String KEY_ASSESSMENT_RECORDS = "key_assessment_records";
 
@@ -51,6 +49,7 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assessment_record);
+        remoteStorage = new FirebaseRemoteStorage();
 
         findViews();
         setListeners();
@@ -60,8 +59,8 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (isChangingConfigurations()) {
-            outState.putSerializable(KEY_ASSESSMENT_RECORDS, stationIdToRecord);
+        if (isChangingConfigurations() && stationIdToRecord != null) {
+            outState.putSerializable(KEY_ASSESSMENT_RECORDS, (Serializable) stationIdToRecord);
         }
     }
 
@@ -102,14 +101,12 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
             showToast("Network is unavailable.");
             return;
         }
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("records")
-                .addListenerForSingleValueEvent(new RecordsValueEventListener());
+        remoteStorage.getRecords(new RecordsValueEventListener());
     }
 
     @SuppressWarnings({"ConstantConditions", "unchecked"})
     private void restoreSessionState(Bundle savedInstanceState) {
-        stationIdToRecord = (LinkedHashMap<String, AssessmentRecord>) savedInstanceState.getSerializable(KEY_ASSESSMENT_RECORDS);
+        stationIdToRecord = (Map<String, AssessmentRecord>) savedInstanceState.getSerializable(KEY_ASSESSMENT_RECORDS);
         initializeStationsSpinner();
     }
 
@@ -119,7 +116,7 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
         public void onChange(String value) {
             int variance = calculateNewVariance();
             setVarianceValue(variance);
-            updateVarianceColor(variance);
+            updateVarianceColor();
         }
 
         private int calculateNewVariance() {
@@ -133,24 +130,26 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
             varianceField.setText(varianceText);
         }
 
-        private void updateVarianceColor(int variance) {
-            int target = readIntegerField(targetField);
-            int color = determineVarianceColor(variance, target);
-            varianceField.setValueColor(color);
-        }
+    }
 
-        private int determineVarianceColor(int variance, int target) {
-            float percent = Math.abs(((float) variance) / target);
-            int color;
-            if (variance > 0 && percent > 0.05f) {
-                color = Color.GREEN;
-            } else if (variance < 0 && percent > 0.1f) {
-                color = Color.RED;
-            } else {
-                color = Color.BLACK;
-            }
-            return color;
+    private void updateVarianceColor() {
+        int variance = readIntegerField(varianceField);
+        int target = readIntegerField(targetField);
+        int color = determineVarianceColor(variance, target);
+        varianceField.setValueColor(color);
+    }
+
+    private int determineVarianceColor(int variance, int target) {
+        float percent = Math.abs(((float) variance) / target);
+        int color;
+        if (variance > 0 && percent > 0.05f) {
+            color = R.color.green;
+        } else if (variance < 0 && percent > 0.1f) {
+            color = R.color.red;
+        } else {
+            color = R.color.black;
         }
+        return color;
     }
 
     private class SendButtonClickListener implements View.OnClickListener {
@@ -164,22 +163,20 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
         private AssessmentRecord readAssessmentRecord() {
             String stationId = stationIdField.getText();
             int actual = readIntegerField(actualField);
+            int target = readIntegerField(targetField);
             int variance = readIntegerField(varianceField);
-            return new AssessmentRecord(stationId, actual, variance);
+            return new AssessmentRecord(stationId, target, new Date(), actual, variance);
         }
 
-        private void updateRecordState(final AssessmentRecord record) {
+        private void updateRecordState(AssessmentRecord record) {
             if (isNetworkUnavailable()) {
                 showToast("Network is unavailable.");
                 return;
             }
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            Map<String, Object> map = Collections.<String, Object>singletonMap(record.stationId, record);
-            database.getReference("records")
-                    .updateChildren(map, new RecordUpdateCompletionListener(record));
+            remoteStorage.updateRecord(record, new RecordUpdateCompletionListener(record));
         }
 
-        private class RecordUpdateCompletionListener implements DatabaseReference.CompletionListener {
+        private class RecordUpdateCompletionListener implements RemoteStorage.RecordUpdateCompletionListener {
 
             private AssessmentRecord record;
 
@@ -188,48 +185,37 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
             }
 
             @Override
-            public void onComplete(DatabaseError error, DatabaseReference reference) {
-                if (error == null) {
-                    String text = String.format(locale, "Updated record for %s", record.stationId);
-                    showToast(text);
-                    updateSessionState(record);
-                } else {
-                    showErrorToast("Failed to update record", error);
-                }
+            public void onComplete() {
+                String text = String.format(locale, "Updated record for %s", record.getStationId());
+                showToast(text);
+                updateSessionState(record);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                showErrorToast("Failed to update record", e);
             }
         }
 
         private void updateSessionState(AssessmentRecord record) {
-            stationIdToRecord.put(record.stationId, record);
+            stationIdToRecord.put(record.getStationId(), record);
         }
 
     }
 
-    private class RecordsValueEventListener implements ValueEventListener {
+    private class RecordsValueEventListener implements RemoteStorage.RecordsQueryListener {
 
         @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
+        public void onResult(Map<String, AssessmentRecord> recordMap) {
             refreshLayout.setRefreshing(false);
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                String key = snapshot.getKey();
-                AssessmentRecord record;
-                try {
-                    record = snapshot.getValue(AssessmentRecord.class);
-                } catch (DatabaseException e) {
-                    showErrorToast("Failed to get assessment record from snapshot", e);
-                    return;
-                }
-                stationIdToRecord.put(key, record);
-            }
-
+            stationIdToRecord = recordMap;
             initializeStationsSpinner();
         }
 
         @Override
-        public void onCancelled(DatabaseError databaseError) {
-            showErrorToast("Records retrieval was cancelled", databaseError);
+        public void onError(Exception e) {
+            showErrorToast("Records retrieval was cancelled", e);
         }
-
     }
 
     private class StationsSpinnerItemSelectedListener implements AdapterView.OnItemSelectedListener {
@@ -249,13 +235,14 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
     }
 
     private void updateFields(AssessmentRecord record) {
-        String dateText = new SimpleDateFormat("HH:mm MM/dd/yy", locale).format(record.date);
+        String dateText = new SimpleDateFormat("HH:mm MM/dd/yy", locale).format(record.getDate());
 
-        stationIdField.setText(record.stationId);
+        stationIdField.setText(record.getStationId());
         dateField.setText(dateText);
-        targetField.setText(String.format(locale, "%d", record.target));
-        actualField.setText(String.format(locale, "%d", record.actual));
-        varianceField.setText(String.format(locale, "%d", record.variance));
+        targetField.setText(String.format(locale, "%d", record.getTarget()));
+        actualField.setText(String.format(locale, "%d", record.getActual()));
+        varianceField.setText(String.format(locale, "%d", record.getVariance()));
+        updateVarianceColor();
     }
 
     private int readIntegerField(AssessmentRecordField field) {
@@ -277,10 +264,6 @@ public class AssessmentRecordActivity extends AppCompatActivity implements Swipe
     }
 
     private void showErrorToast(String message, Exception e) {
-        showErrorToast(message, e.getMessage());
-    }
-
-    private void showErrorToast(String message, DatabaseError e) {
         showErrorToast(message, e.getMessage());
     }
 
