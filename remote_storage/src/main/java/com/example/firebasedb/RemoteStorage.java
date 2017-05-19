@@ -1,4 +1,4 @@
-package com.example.icecream.model;
+package com.example.firebasedb;
 
 import java.util.Map;
 

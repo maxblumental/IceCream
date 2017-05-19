@@ -2,11 +2,11 @@ package com.example.icecream.di.assessment_record;
 
 import android.os.Bundle;
 
-import com.example.icecream.model.RemoteStorage;
+import com.example.firebasedb.RemoteStorage;
 import com.example.icecream.di.PerActivity;
-import com.example.icecream.model.AssessmentRecord;
 import com.example.icecream.model.AssessmentRecordsManager;
 import com.example.icecream.model.AssessmentRecordsManagerImpl;
+import com.example.icecream.model.ObservableAssessmentRecord;
 import com.example.icecream.network.NetworkStateMonitor;
 
 import dagger.Module;
@@ -23,8 +23,8 @@ public class ModelModule {
 
     @Provides
     @PerActivity
-    AssessmentRecord provideAssessmentRecord() {
-        return new AssessmentRecord();
+    ObservableAssessmentRecord provideObservableAssessmentRecord() {
+        return new ObservableAssessmentRecord();
     }
 
     @Provides

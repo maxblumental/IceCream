@@ -1,15 +1,16 @@
 package com.example.icecream.controller;
 
-import com.example.icecream.model.AssessmentRecord;
+import com.example.firebasedb.AssessmentRecord;
 import com.example.icecream.model.AssessmentRecordsManager;
+import com.example.icecream.model.ObservableAssessmentRecord;
 
 public class StationIdsSpinnerControllerImpl implements StationIdsSpinnerController {
 
     private AssessmentRecordsManager recordsManager;
-    private AssessmentRecord record;
+    private ObservableAssessmentRecord record;
 
     public StationIdsSpinnerControllerImpl(AssessmentRecordsManager recordsManager,
-                                           AssessmentRecord record) {
+                                           ObservableAssessmentRecord record) {
         this.recordsManager = recordsManager;
         this.record = record;
     }

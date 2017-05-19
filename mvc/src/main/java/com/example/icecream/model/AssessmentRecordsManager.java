@@ -6,6 +6,8 @@ import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.os.Bundle;
 
+import com.example.firebasedb.AssessmentRecord;
+
 import java.util.List;
 
 public interface AssessmentRecordsManager extends Observable {

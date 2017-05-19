@@ -1,5 +1,7 @@
 package com.example.icecream.model;
 
+import com.example.firebasedb.AssessmentRecord;
+import com.example.firebasedb.RemoteStorage;
 import com.example.icecream.network.NetworkStateMonitor;
 
 import org.junit.Before;
@@ -244,7 +246,7 @@ public class AssessmentRecordsManagerImplTest {
     private Map<String, AssessmentRecord> toRecordsMap(List<AssessmentRecord> records) {
         HashMap<String, AssessmentRecord> map = new HashMap<>();
         for (AssessmentRecord record : records) {
-            map.put(record.stationId, record);
+            map.put(record.getStationId(), record);
         }
         return map;
     }

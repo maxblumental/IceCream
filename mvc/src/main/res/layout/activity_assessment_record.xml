@@ -10,7 +10,7 @@
 
         <variable
             name="record"
-            type="com.example.icecream.model.AssessmentRecord"/>
+            type="com.example.icecream.model.ObservableAssessmentRecord"/>
 
         <variable
             name="network"

@@ -9,8 +9,8 @@ import com.example.icecream.databinding.ActivityAssessmentRecordBinding;
 import com.example.icecream.di.assessment_record.AssessmentRecordSubcomponent;
 import com.example.icecream.di.assessment_record.ControllerModule;
 import com.example.icecream.di.assessment_record.ModelModule;
-import com.example.icecream.model.AssessmentRecord;
 import com.example.icecream.model.AssessmentRecordsManager;
+import com.example.icecream.model.ObservableAssessmentRecord;
 import com.example.icecream.network.NetworkStateIndicator;
 
 import javax.inject.Inject;
@@ -23,7 +23,7 @@ public class AssessmentRecordActivity extends AppCompatActivity {
     AssessmentRecordsManager recordsManager;
 
     @Inject
-    AssessmentRecord record;
+    ObservableAssessmentRecord record;
 
     @Inject
     NetworkStateIndicator networkStateIndicator;

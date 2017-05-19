@@ -9,8 +9,8 @@ import com.example.icecream.controller.SendButtonControllerImpl;
 import com.example.icecream.controller.StationIdsSpinnerController;
 import com.example.icecream.controller.StationIdsSpinnerControllerImpl;
 import com.example.icecream.di.PerActivity;
-import com.example.icecream.model.AssessmentRecord;
 import com.example.icecream.model.AssessmentRecordsManager;
+import com.example.icecream.model.ObservableAssessmentRecord;
 
 import dagger.Module;
 import dagger.Provides;
@@ -20,7 +20,7 @@ public class ControllerModule {
 
     @Provides
     @PerActivity
-    ActualFieldController providesActualFieldController(AssessmentRecord record) {
+    ActualFieldController providesActualFieldController(ObservableAssessmentRecord record) {
         return new ActualFieldControllerImpl(record);
     }
 
@@ -33,14 +33,14 @@ public class ControllerModule {
     @Provides
     @PerActivity
     SendButtonController providesSendButtonController(AssessmentRecordsManager recordsManager,
-                                                      AssessmentRecord record) {
+                                                      ObservableAssessmentRecord record) {
         return new SendButtonControllerImpl(recordsManager, record);
     }
 
     @Provides
     @PerActivity
     StationIdsSpinnerController providesStationIdsSpinnerController(AssessmentRecordsManager recordsManager,
-                                                                    AssessmentRecord record) {
+                                                                    ObservableAssessmentRecord record) {
         return new StationIdsSpinnerControllerImpl(recordsManager, record);
     }
 }

@@ -6,6 +6,8 @@ import android.databinding.ObservableField;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.example.firebasedb.AssessmentRecord;
+import com.example.firebasedb.RemoteStorage;
 import com.example.icecream.BR;
 import com.example.icecream.network.NetworkStateMonitor;
 
@@ -122,7 +124,7 @@ public class AssessmentRecordsManagerImpl extends BaseObservable implements Asse
 
         @Override
         public void onComplete() {
-            stationIdToRecord.put(record.stationId, record);
+            stationIdToRecord.put(record.getStationId(), record);
         }
 
         @Override

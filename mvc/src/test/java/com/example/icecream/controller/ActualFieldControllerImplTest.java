@@ -1,6 +1,6 @@
 package com.example.icecream.controller;
 
-import com.example.icecream.model.AssessmentRecord;
+import com.example.icecream.model.ObservableAssessmentRecord;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,7 +17,7 @@ public class ActualFieldControllerImplTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
-    AssessmentRecord record;
+    ObservableAssessmentRecord record;
 
     private ActualFieldController controller;
 

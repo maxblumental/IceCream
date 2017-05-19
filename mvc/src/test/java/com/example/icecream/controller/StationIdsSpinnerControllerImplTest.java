@@ -1,7 +1,8 @@
 package com.example.icecream.controller;
 
-import com.example.icecream.model.AssessmentRecord;
+import com.example.firebasedb.AssessmentRecord;
 import com.example.icecream.model.AssessmentRecordsManager;
+import com.example.icecream.model.ObservableAssessmentRecord;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,7 +22,7 @@ public class StationIdsSpinnerControllerImplTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
-    AssessmentRecord record;
+    ObservableAssessmentRecord record;
 
     @Mock
     AssessmentRecordsManager recordsManager;

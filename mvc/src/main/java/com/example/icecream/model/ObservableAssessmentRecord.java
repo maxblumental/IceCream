@@ -3,50 +3,40 @@ package com.example.icecream.model;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
+import com.example.firebasedb.AssessmentRecord;
 import com.example.icecream.BR;
 
 import java.util.Date;
 
-public class AssessmentRecord extends BaseObservable {
+public class ObservableAssessmentRecord extends BaseObservable {
 
-    public String stationId;
+    private AssessmentRecord record = new AssessmentRecord();
 
-    public int target;
-
-    public Date date;
-
-    public int actual;
-
-    public int variance;
-
-    public VarianceDegree varianceDegree;
-
-    public AssessmentRecord() {
-    }
+    private VarianceDegree varianceDegree;
 
     @Bindable
     public String getStationId() {
-        return stationId;
+        return record.getStationId();
     }
 
     @Bindable
     public int getTarget() {
-        return target;
+        return record.getTarget();
     }
 
     @Bindable
     public Date getDate() {
-        return date;
+        return record.getDate();
     }
 
     @Bindable
     public int getActual() {
-        return actual;
+        return record.getActual();
     }
 
     @Bindable
     public int getVariance() {
-        return variance;
+        return record.getVariance();
     }
 
     @Bindable
@@ -55,29 +45,29 @@ public class AssessmentRecord extends BaseObservable {
     }
 
     public void setStationId(String stationId) {
-        this.stationId = stationId;
+        record.setStationId(stationId);
         notifyPropertyChanged(BR.stationId);
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        record.setDate(date);
         notifyPropertyChanged(BR.date);
     }
 
     public void setActual(int actual) {
-        this.actual = actual;
+        record.setActual(actual);
         notifyPropertyChanged(BR.actual);
         updateVariance();
     }
 
     public void setTarget(int target) {
-        this.target = target;
+        record.setTarget(target);
         notifyPropertyChanged(BR.target);
         updateVariance();
     }
 
     public void setVariance(int variance) {
-        this.variance = variance;
+        record.setVariance(variance);
         notifyPropertyChanged(BR.variance);
         updateVarianceDegree();
     }
@@ -87,9 +77,13 @@ public class AssessmentRecord extends BaseObservable {
         notifyPropertyChanged(BR.varianceDegree);
     }
 
-    public AssessmentRecord copy() {
+    public AssessmentRecord createRecordCopy() {
         AssessmentRecord copy = new AssessmentRecord();
-        copy.fillFrom(this);
+        copy.setStationId(record.getStationId());
+        copy.setDate(record.getDate());
+        copy.setTarget(record.getTarget());
+        copy.setActual(record.getActual());
+        copy.setVariance(record.getVariance());
         return copy;
     }
 
@@ -98,10 +92,12 @@ public class AssessmentRecord extends BaseObservable {
     }
 
     private void updateVarianceDegree() {
+        int target = record.getTarget();
         if (target == 0) {
             setVarianceDegree(VarianceDegree.NORMAL);
             return;
         }
+        int variance = record.getVariance();
         float percent = Math.abs(((float) variance) / target);
         VarianceDegree degree;
         if (variance > 0 && percent > 0.05f) {
@@ -115,14 +111,15 @@ public class AssessmentRecord extends BaseObservable {
     }
 
     public void fillFrom(AssessmentRecord record) {
-        setStationId(record.stationId);
-        setDate(record.date);
-        setTarget(record.target);
-        setActual(record.actual);
-        setVariance(record.variance);
+        setStationId(record.getStationId());
+        setDate(record.getDate());
+        setTarget(record.getTarget());
+        setActual(record.getActual());
     }
 
     private void updateVariance() {
+        int actual = record.getActual();
+        int target = record.getTarget();
         int newVariance = actual - target;
         setVariance(newVariance);
     }

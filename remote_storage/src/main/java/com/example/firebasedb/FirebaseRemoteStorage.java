@@ -1,4 +1,4 @@
-package com.example.icecream.model;
+package com.example.firebasedb;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,7 +24,7 @@ public class FirebaseRemoteStorage implements RemoteStorage {
     public void updateRecord(AssessmentRecord record, RecordUpdateCompletionListener listener) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         Map<String, Object> recordUpdate =
-                Collections.<String, Object>singletonMap(record.stationId, record);
+                Collections.<String, Object>singletonMap(record.getStationId(), record);
         database.getReference("records")
                 .updateChildren(recordUpdate, new RecordUpdateListener(listener));
     }

@@ -1,12 +1,12 @@
 package com.example.icecream.controller;
 
-import com.example.icecream.model.AssessmentRecord;
+import com.example.icecream.model.ObservableAssessmentRecord;
 
 public class ActualFieldControllerImpl implements ActualFieldController {
 
-    private AssessmentRecord record;
+    private ObservableAssessmentRecord record;
 
-    public ActualFieldControllerImpl(AssessmentRecord record) {
+    public ActualFieldControllerImpl(ObservableAssessmentRecord record) {
         this.record = record;
     }
 

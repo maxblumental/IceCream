@@ -2,10 +2,10 @@ package com.example.icecream.di;
 
 import android.content.Context;
 
-import com.example.icecream.model.RemoteStorage;
+import com.example.firebasedb.FirebaseRemoteStorage;
+import com.example.firebasedb.RemoteStorage;
 import com.example.icecream.network.NetworkState;
 import com.example.icecream.network.NetworkStateImpl;
-import com.example.icecream.model.FirebaseRemoteStorage;
 import com.example.icecream.network.NetworkStateIndicator;
 import com.example.icecream.network.NetworkStateMonitor;
 

@@ -1,7 +1,8 @@
 package com.example.icecream.controller;
 
-import com.example.icecream.model.AssessmentRecord;
+import com.example.firebasedb.AssessmentRecord;
 import com.example.icecream.model.AssessmentRecordsManager;
+import com.example.icecream.model.ObservableAssessmentRecord;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,7 +23,7 @@ public class SendButtonControllerImplTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
     @Mock
-    AssessmentRecord record;
+    ObservableAssessmentRecord record;
 
     @Mock
     AssessmentRecordsManager recordsManager;
@@ -45,7 +46,7 @@ public class SendButtonControllerImplTest {
     public void onClick_takeACopyOfTheRecord() throws Exception {
         controller.onClick();
 
-        verify(record).copy();
+        verify(record).createRecordCopy();
     }
 
     @Test
@@ -59,6 +60,6 @@ public class SendButtonControllerImplTest {
     }
 
     private void mockRecordCopy(AssessmentRecord copy) {
-        when(record.copy()).thenReturn(copy);
+        when(record.createRecordCopy()).thenReturn(copy);
     }
 }

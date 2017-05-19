@@ -9,8 +9,8 @@ import android.widget.Spinner;
 
 import com.example.commonui.AssessmentRecordField;
 import com.example.icecream.R;
-import com.example.icecream.model.AssessmentRecord;
 import com.example.icecream.model.AssessmentRecordsManager;
+import com.example.icecream.model.ObservableAssessmentRecord;
 import com.example.icecream.view.ErrorHandlingView;
 import com.example.icecream.view.NetworkObserverView;
 
@@ -67,7 +67,7 @@ public class BindingAdapters {
 
     @BindingAdapter("valueColor")
     public static void setValueColor(AssessmentRecordField field,
-                                     AssessmentRecord.VarianceDegree varianceDegree) {
+                                     ObservableAssessmentRecord.VarianceDegree varianceDegree) {
         if (varianceDegree == null) {
             return;
         }
