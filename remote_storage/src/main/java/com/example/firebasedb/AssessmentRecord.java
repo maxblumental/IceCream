@@ -17,6 +17,14 @@ public class AssessmentRecord {
     public AssessmentRecord() {
     }
 
+    public AssessmentRecord(String stationId, int target, Date date, int actual, int variance) {
+        this.stationId = stationId;
+        this.target = target;
+        this.date = date;
+        this.actual = actual;
+        this.variance = variance;
+    }
+
     public String getStationId() {
         return stationId;
     }
