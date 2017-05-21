@@ -1,5 +1,6 @@
 package com.example.icecream.di.assessment_record
 
+import android.os.Bundle
 import com.example.firebasedb.RxFirebaseRemoteStorage
 import com.example.firebasedb.RxRemoteStorage
 import com.example.icecream.di.PerActivity
@@ -10,12 +11,12 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class ModelModule {
+class ModelModule(private val savedState: Bundle?) {
 
     @Provides
     @PerActivity
     internal fun provideModel(remoteStorage: RxRemoteStorage): Model {
-        return ModelImpl(remoteStorage)
+        return ModelImpl(remoteStorage, savedState)
     }
 
     @Provides

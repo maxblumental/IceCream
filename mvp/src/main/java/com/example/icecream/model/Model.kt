@@ -1,9 +1,11 @@
 package com.example.icecream.model
 
+import android.os.Bundle
 import com.example.firebasedb.AssessmentRecord
 import com.example.firebasedb.RxRemoteStorage
 import io.reactivex.Completable
 import io.reactivex.Single
+import java.io.Serializable
 
 interface Model {
 
@@ -17,11 +19,19 @@ interface Model {
 
     fun calculateVariance(actual: Int, target: Int): Int
 
+    fun onSaveState(): Bundle
+
 }
 
-class ModelImpl(val remoteStorage: RxRemoteStorage) : Model {
-
+class ModelImpl(val remoteStorage: RxRemoteStorage, savedState: Bundle?) : Model {
     private var records: Map<String, AssessmentRecord>? = null
+
+    init {
+        if (savedState != null && savedState.containsKey(KEY_RECORDS)) {
+            @Suppress("UNCHECKED_CAST")
+            records = savedState.getSerializable(KEY_RECORDS) as Map<String, AssessmentRecord>
+        }
+    }
 
     override fun loadRecords(): Single<List<String>> {
         return if (records != null) {
@@ -46,4 +56,9 @@ class ModelImpl(val remoteStorage: RxRemoteStorage) : Model {
     }
 
     override fun calculateVariance(actual: Int, target: Int): Int = actual - target
+
+    override fun onSaveState() = Bundle()
+            .apply { putSerializable(KEY_RECORDS, records as Serializable) }
 }
+
+private const val KEY_RECORDS = "key_records"

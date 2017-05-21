@@ -1,5 +1,6 @@
 package com.example.icecream.presenter
 
+import android.os.Bundle
 import android.support.annotation.ColorRes
 import com.example.firebasedb.AssessmentRecord
 import com.example.icecream.R
@@ -24,6 +25,8 @@ interface AssessmentRecordPresenter {
     fun send()
 
     fun onStationSelected(stationId: String)
+
+    fun onSaveState(): Bundle
 
 }
 
@@ -79,6 +82,8 @@ class AssessmentRecordPresenterImpl(private val model: Model) : AssessmentRecord
         val record = model.getRecord(stationId) ?: return
         view?.fillFrom(record)
     }
+
+    override fun onSaveState() = model.onSaveState()
 
     private fun AssessmentRecordView.fillFrom(record: AssessmentRecord) {
         stationId = record.stationId
