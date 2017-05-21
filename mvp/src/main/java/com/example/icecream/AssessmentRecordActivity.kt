@@ -33,6 +33,7 @@ class AssessmentRecordActivity : AppCompatActivity() {
         view = AssessmentRecordViewImpl(presenter, viewGroup)
 
         presenter.attachView(view)
+        presenter.initialize()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

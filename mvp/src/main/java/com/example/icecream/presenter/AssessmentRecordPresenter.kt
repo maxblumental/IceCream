@@ -18,6 +18,8 @@ interface AssessmentRecordPresenter {
 
     fun detachView()
 
+    fun initialize()
+
     fun onActualChanged()
 
     fun onRefresh()
@@ -35,14 +37,17 @@ class AssessmentRecordPresenterImpl(private val model: Model) : AssessmentRecord
 
     private val disposable: CompositeDisposable = CompositeDisposable()
     private val simpleDateFormat = SimpleDateFormat("HH:mm MM/dd/yy", Locale.ENGLISH)
+
     override fun attachView(view: AssessmentRecordView) {
         this.view = view
+    }
 
+    override fun initialize() {
         disposable += model.loadRecords()
                 .compose(addRefreshing())
                 .subscribe(
-                        { list -> view.stationIds = list },
-                        { view.showToast("Failed to load records: ${it.message}") }
+                        { list -> view?.stationIds = list },
+                        { view?.showToast("Failed to load records: ${it.message}") }
                 )
     }
 
@@ -73,9 +78,10 @@ class AssessmentRecordPresenterImpl(private val model: Model) : AssessmentRecord
                     variance = view.variance.parseInt()
                 }
         disposable += model.update(record)
-                .subscribe {
-                    view.showToast("Updated record for ${record.stationId}")
-                }
+                .subscribe(
+                        { view.showToast("Updated record for ${record.stationId}") },
+                        { view.showToast("Failed to update record for ${record.stationId}") }
+                )
     }
 
     override fun onStationSelected(stationId: String) {
@@ -90,8 +96,8 @@ class AssessmentRecordPresenterImpl(private val model: Model) : AssessmentRecord
         date = simpleDateFormat.format(record.date)
         target = record.target.toString()
         actual = record.actual.toString()
-        variance = record.actual.toString()
-        updateVariance()
+        variance = record.variance.toString()
+        updateVarianceColor(record.variance, record.target)
     }
 
     @ColorRes
@@ -120,8 +126,12 @@ class AssessmentRecordPresenterImpl(private val model: Model) : AssessmentRecord
         val newVariance = model.calculateVariance(actual, target)
         view.variance = newVariance.toString()
 
-        val varianceColor = determineVarianceColor(target, newVariance)
-        view.updateVarianceColor(varianceColor)
+        updateVarianceColor(newVariance, target)
+    }
+
+    private fun updateVarianceColor(variance: Int, target: Int) {
+        val varianceColor = determineVarianceColor(target, variance)
+        view?.updateVarianceColor(varianceColor)
     }
 
     private operator fun CompositeDisposable.plusAssign(disposable: Disposable) {

@@ -47,4 +47,7 @@ dependencies {
 
     testCompile 'org.mockito:mockito-android:2.7.22'
     testCompile 'junit:junit:4.12'
+    testCompile("com.nhaarman:mockito-kotlin:1.4.0") {
+        exclude module: 'kotlin-stdlib'
+    }
 }
