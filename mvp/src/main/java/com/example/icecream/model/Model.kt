@@ -23,7 +23,7 @@ interface Model {
 
 }
 
-class ModelImpl(val remoteStorage: RxRemoteStorage, savedState: Bundle?) : Model {
+class ModelImpl(private val remoteStorage: RxRemoteStorage, savedState: Bundle?) : Model {
     private var records: Map<String, AssessmentRecord>? = null
 
     init {
