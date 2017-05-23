@@ -1,19 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.icecream.AssessmentRecordActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+    <data>
 
-</android.support.constraint.ConstraintLayout>
+        <variable
+            name="viewModel"
+            type="com.example.icecream.view_model.AssessmentRecordViewModel"/>
+    </data>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:onRefreshListener="@{viewModel::onRefresh}"
+        app:refreshing="@{viewModel.isRefreshing}">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="8dp"
+                    app:adapter="@{viewModel.stationIds}"
+                    app:itemSelectedListener="@{(item) -> viewModel.onStationSelected((String)item)}"/>
+
+                <com.example.commonui.AssessmentRecordField
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:enabled="false"
+                    app:fieldName="@string/station_id"
+                    app:text="@{viewModel.stationId}"/>
+
+                <com.example.commonui.AssessmentRecordField
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:dateText="@{viewModel.date}"
+                    app:enabled="false"
+                    app:fieldName="@string/date"/>
+
+                <com.example.commonui.AssessmentRecordField
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:enabled="false"
+                    app:fieldName="@string/target"
+                    app:inputType="decimal"
+                    app:numberDecimalText="@{viewModel.target}"/>
+
+                <com.example.commonui.AssessmentRecordField
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:enabled="true"
+                    app:fieldName="@string/actual"
+                    app:inputType="decimal"
+                    app:numberDecimalText="@{viewModel.actual}"
+                    app:onValueChangeListener="@{viewModel::onActualChange}"/>
+
+                <com.example.commonui.AssessmentRecordField
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:enabled="false"
+                    app:fieldName="@string/variance"
+                    app:inputType="decimal"
+                    app:numberDecimalText="@{viewModel.variance}"
+                    app:valueColor="@{viewModel.varianceDegree}"/>
+
+                <Button
+                    android:id="@+id/sendButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="8dp"
+                    android:onClick="@{() -> viewModel.onSend()}"
+                    android:text="@string/send"/>
+            </LinearLayout>
+        </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+</layout>
