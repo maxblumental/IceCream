@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Ice Cream (MVI)</string>
+    <string name="station_id">Station ID</string>
+    <string name="date">Date</string>
+    <string name="target">Target</string>
+    <string name="actual">Actual</string>
+    <string name="variance">Variance</string>
+    <string name="send">Send</string>
+</resources>

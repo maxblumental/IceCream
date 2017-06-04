@@ -1,1 +1,1 @@
-include ':forms_and_controls', ':mvc', ':mvp', ':mvvm', ':common_ui', ':remote_storage'
+include ':forms_and_controls', ':mvc', ':mvp', ':mvvm', ':common_ui', ':remote_storage', ':mvi'
