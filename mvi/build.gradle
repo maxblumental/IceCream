@@ -41,8 +41,10 @@ dependencies {
     provided 'org.glassfish:javax.annotation:10.0-b28'
 
     compile 'io.reactivex.rxjava2:rxjava:2.1.0'
+    compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+    compile 'com.jakewharton.rxbinding2:rxbinding-support-v4:2.0.0'
 
-    compile project(path: ':common_ui')
+    compile project(':common_ui')
     compile project(":remote_storage")
 
     testCompile 'org.mockito:mockito-android:2.7.22'

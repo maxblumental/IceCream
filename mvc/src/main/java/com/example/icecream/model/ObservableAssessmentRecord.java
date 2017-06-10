@@ -4,6 +4,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 
 import com.example.firebasedb.AssessmentRecord;
+import com.example.firebasedb.AssessmentRecordBuilder;
 import com.example.icecream.BR;
 
 import java.util.Date;

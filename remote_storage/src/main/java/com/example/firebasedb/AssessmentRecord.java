@@ -64,4 +64,30 @@ public class AssessmentRecord {
     public void setVariance(int variance) {
         this.variance = variance;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AssessmentRecord that = (AssessmentRecord) o;
+
+        if (target != that.target) return false;
+        if (actual != that.actual) return false;
+        if (variance != that.variance) return false;
+        if (stationId != null ? !stationId.equals(that.stationId) : that.stationId != null)
+            return false;
+        return date != null ? date.equals(that.date) : that.date == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = stationId != null ? stationId.hashCode() : 0;
+        result = 31 * result + target;
+        result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + actual;
+        result = 31 * result + variance;
+        return result;
+    }
 }
