@@ -1,21 +1,24 @@
 package com.example.modelviewintent.presenter
 
 import android.util.Log
-import com.example.firebasedb.AssessmentRecord
 import com.example.modelviewintent.interactor.RecordsInteractor
+import com.example.modelviewintent.presenter.AssessmentRecordPresenter.VarianceDegree.BAD
+import com.example.modelviewintent.presenter.AssessmentRecordPresenter.VarianceDegree.GOOD
+import com.example.modelviewintent.presenter.AssessmentRecordPresenter.VarianceDegree.NORMAL
 import com.example.modelviewintent.view.AssessmentRecordView
 import com.example.modelviewintent.view_state.PartialState
 import com.example.modelviewintent.view_state.ViewState
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.BiFunction
 
 interface AssessmentRecordPresenter {
 
     fun attachView(view: AssessmentRecordView)
 
     fun detachView()
+
+    enum class VarianceDegree {GOOD, NORMAL, BAD }
 }
 
 class AssessmentRecordPresenterImpl(private val interactor: RecordsInteractor) : AssessmentRecordPresenter {
@@ -29,11 +32,20 @@ class AssessmentRecordPresenterImpl(private val interactor: RecordsInteractor) :
 
         val actualChange = view.actualChangeIntent
                 .doOnNext { Log.d(javaClass.simpleName, "intent: actual change") }
-                .zipWith(view.targetValue,
-                        BiFunction<Int, Int, Int> { actual, target ->
-                            interactor.calculateVariance(actual, target)
-                        })
-                .map { variance -> PartialState.Variance(variance) }
+                .flatMap { actual ->
+                    view.targetValue
+                            .map { target ->
+                                target to interactor.calculateVariance(actual, target)
+                            }
+                }
+                .map {
+                    val (target, variance) = it
+                    variance to assessVarianceDegree(target, variance)
+                }
+                .map {
+                    val (variance, varianceDegree) = it
+                    PartialState.Variance(variance, varianceDegree)
+                }
 
         val recordSelection = view.selectRecordIntent
                 .doOnNext { Log.d(javaClass.simpleName, "intent: record selection") }
@@ -57,10 +69,10 @@ class AssessmentRecordPresenterImpl(private val interactor: RecordsInteractor) :
                         { Log.e(javaClass.simpleName, it.message, it) })
 
 
-        val initialState = ViewState(AssessmentRecord(), emptyList(), false, null)
-        disposable += Observable.merge(load(), actualChange, recordSelection, refreshes)
+        disposable += Observable.merge(actualChange, load(), recordSelection, refreshes)
                 .doOnNext { Log.d(javaClass.simpleName, "Partial=${it.javaClass.simpleName}") }
-                .scan(initialState, { prev, partial -> partial.produceNext(prev) })
+                .scan(ViewState(), { prev, partial -> partial.produceNext(prev) })
+                .distinctUntilChanged()
                 .subscribe({ view.render(it) },
                         { Log.e(javaClass.simpleName, it.message, it) })
     }
@@ -72,7 +84,6 @@ class AssessmentRecordPresenterImpl(private val interactor: RecordsInteractor) :
 
     private fun load(): Observable<PartialState> {
         return interactor.loadRecords()
-                .doOnSuccess { Log.d(this@AssessmentRecordPresenterImpl.javaClass.simpleName, it.javaClass.simpleName) }
                 .map { PartialState.RecordsLoaded(it) as PartialState }
                 .onErrorReturn { PartialState.Error(it as Exception) }
                 .toObservable()
@@ -81,5 +92,16 @@ class AssessmentRecordPresenterImpl(private val interactor: RecordsInteractor) :
 
     private operator fun CompositeDisposable?.plusAssign(disposable: Disposable) {
         this?.add(disposable)
+    }
+
+    private fun assessVarianceDegree(target: Int, variance: Int): AssessmentRecordPresenter.VarianceDegree {
+        val percent = Math.abs(variance.toFloat()) / target
+        return if (variance > 0 && percent > 0.05f) {
+            GOOD
+        } else if (variance < 0 && percent > 0.1f) {
+            BAD
+        } else {
+            NORMAL
+        }
     }
 }

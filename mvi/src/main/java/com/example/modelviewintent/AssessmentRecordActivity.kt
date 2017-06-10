@@ -14,6 +14,9 @@ import com.example.firebasedb.AssessmentRecord
 import com.example.modelviewintent.di.assessment_record.ModelModule
 import com.example.modelviewintent.di.assessment_record.PresenterModule
 import com.example.modelviewintent.presenter.AssessmentRecordPresenter
+import com.example.modelviewintent.presenter.AssessmentRecordPresenter.VarianceDegree.BAD
+import com.example.modelviewintent.presenter.AssessmentRecordPresenter.VarianceDegree.GOOD
+import com.example.modelviewintent.presenter.AssessmentRecordPresenter.VarianceDegree.NORMAL
 import com.example.modelviewintent.utils.parseIntSafe
 import com.example.modelviewintent.utils.textChanges
 import com.example.modelviewintent.view.AssessmentRecordView
@@ -69,20 +72,10 @@ class AssessmentRecordActivity : AppCompatActivity(), AssessmentRecordView {
     }
 
     override fun render(viewState: ViewState) {
-        stationsSpinner.adapter =
-                ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, viewState.recordIds)
-        with(viewState.record) {
-            stationIdField.text = stationId
-            dateField.text = if (date != null) {
-                simpleDateFormat.format(date)
-            } else {
-                ""
-            }
-            targetField.text = target.toString()
-            actualField.text = actual.toString()
-            varianceField.text = variance.toString()
-        }
-        refreshLayout.isRefreshing = viewState.isLoading
+        updateRefreshing(viewState)
+        updateError(viewState)
+        updateRecordIds(viewState)
+        updateRecord(viewState)
     }
 
     override val sendRecordIntent: Observable<Unit>
@@ -114,5 +107,53 @@ class AssessmentRecordActivity : AppCompatActivity(), AssessmentRecordView {
 
     override fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun updateRefreshing(viewState: ViewState) {
+        val loading = viewState.isLoading
+        if (loading.isUpdated) {
+            refreshLayout.isRefreshing = loading.value
+        }
+    }
+
+    private fun updateError(viewState: ViewState) {
+        val error = viewState.error
+        if (error.isUpdated && error.value != null) {
+            Toast.makeText(this, "Error: ${error.value.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun updateRecordIds(viewState: ViewState) {
+        val recordIds = viewState.recordIds
+        if (recordIds.isUpdated) {
+            stationsSpinner.adapter =
+                    ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, recordIds.value)
+        }
+    }
+
+    private fun updateRecord(viewState: ViewState) = with(viewState) {
+        if (stationId.isUpdated) {
+            stationIdField.text = stationId.value
+        }
+        if (date.isUpdated) {
+            dateField.text = simpleDateFormat.format(date.value)
+        }
+        if (target.isUpdated) {
+            targetField.text = target.value.toString()
+        }
+        if (actual.isUpdated) {
+            actualField.text = actual.value.toString()
+        }
+        if (variance.isUpdated) {
+            varianceField.text = variance.value.toString()
+        }
+        if (varianceDegree.isUpdated) {
+            val color = when (varianceDegree.value) {
+                NORMAL -> R.color.normalVarianceDegree
+                BAD -> R.color.badVarianceDegree
+                GOOD -> R.color.goodVarianceDegree
+            }
+            varianceField.setValueColor(color)
+        }
     }
 }

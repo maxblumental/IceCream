@@ -1,7 +1,8 @@
 package com.example.modelviewintent.view_state
 
 import com.example.firebasedb.AssessmentRecord
-import com.example.modelviewintent.utils.builder
+import com.example.modelviewintent.presenter.AssessmentRecordPresenter
+import java.util.*
 
 interface NextStateProducer {
     fun produceNext(viewState: ViewState): ViewState
@@ -9,26 +10,28 @@ interface NextStateProducer {
 
 sealed class PartialState : NextStateProducer {
 
-    class Variance(val variance: Int) : PartialState() {
+    class Variance(val variance: Int,
+                   val varianceDegree: AssessmentRecordPresenter.VarianceDegree) : PartialState() {
         override fun produceNext(viewState: ViewState) =
-                with(viewState) {
-                    builder()
-                            .setRecord(
-                                    record.builder()
-                                            .setVariance(variance)
-                                            .build()
-                            )
-                            .build()
-                }
+                viewState.builder()
+                        .setVariance(variance)
+                        .setVarianceDegree(varianceDegree)
+                        .build()
 
     }
 
     class Record(val record: AssessmentRecord?) : PartialState() {
         override fun produceNext(viewState: ViewState) =
                 if (record != null) {
-                    viewState.builder()
-                            .setRecord(record)
-                            .build()
+                    with(record) {
+                        viewState.builder()
+                                .setStationId(stationId)
+                                .setDate(date)
+                                .setActual(actual)
+                                .setTarget(target)
+                                .setVariance(variance)
+                                .build()
+                    }
                 } else {
                     viewState
                 }
@@ -50,23 +53,20 @@ sealed class PartialState : NextStateProducer {
 
     }
 
-    class Empty : PartialState() {
-        override fun produceNext(viewState: ViewState) =
-                viewState.builder()
-                        .setRecord(AssessmentRecord())
-                        .setRecordIds(emptyList())
-                        .setError(null)
-                        .setLoading(false)
-                        .build()
-    }
-
     class RecordsLoaded(private val records: List<AssessmentRecord>) : PartialState() {
-        override fun produceNext(viewState: ViewState) = viewState.builder()
-                .setLoading(false)
-                .setRecordIds(records.map { it.stationId })
-                .setRecord(records.first())
-                .setError(null)
-                .build()
+        override fun produceNext(viewState: ViewState): ViewState {
+            val record = records.first()
+            return viewState.builder()
+                    .setStationId(record.stationId)
+                    .setDate(record.date)
+                    .setActual(record.actual)
+                    .setTarget(record.target)
+                    .setVariance(record.variance)
+                    .setLoading(false)
+                    .setRecordIds(records.map { it.stationId })
+                    .setError(null)
+                    .build()
+        }
     }
 
     class Error(private val exception: Exception) : PartialState() {
