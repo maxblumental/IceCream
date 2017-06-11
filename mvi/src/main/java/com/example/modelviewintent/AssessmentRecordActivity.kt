@@ -46,13 +46,20 @@ class AssessmentRecordActivity : AppCompatActivity(), AssessmentRecordView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val savedState = savedInstanceState?.getBundle(KEY_STATE)
+
         IceCreamApplication.component
-                .plus(ModelModule(), PresenterModule())
+                .plus(ModelModule(savedState), PresenterModule())
                 .inject(this)
 
         findViews()
 
         presenter.attachView(this)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBundle(KEY_STATE, presenter.onSaveState())
     }
 
     override fun onDestroy() {
@@ -157,3 +164,5 @@ class AssessmentRecordActivity : AppCompatActivity(), AssessmentRecordView {
         }
     }
 }
+
+private const val KEY_STATE = "key_state"

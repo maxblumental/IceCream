@@ -1,5 +1,6 @@
 package com.example.modelviewintent.presenter
 
+import android.os.Bundle
 import android.util.Log
 import com.example.modelviewintent.interactor.RecordsInteractor
 import com.example.modelviewintent.presenter.AssessmentRecordPresenter.VarianceDegree.BAD
@@ -17,6 +18,8 @@ interface AssessmentRecordPresenter {
     fun attachView(view: AssessmentRecordView)
 
     fun detachView()
+
+    fun onSaveState(): Bundle
 
     enum class VarianceDegree {GOOD, NORMAL, BAD }
 }
@@ -81,6 +84,8 @@ class AssessmentRecordPresenterImpl(private val interactor: RecordsInteractor) :
         disposable?.dispose()
         view = null
     }
+
+    override fun onSaveState(): Bundle = interactor.saveState()
 
     private fun load(): Observable<PartialState> {
         return interactor.loadRecords()

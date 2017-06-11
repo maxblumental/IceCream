@@ -2,7 +2,6 @@ package com.example.modelviewintent.view_state
 
 import com.example.firebasedb.AssessmentRecord
 import com.example.modelviewintent.presenter.AssessmentRecordPresenter
-import java.util.*
 
 interface NextStateProducer {
     fun produceNext(viewState: ViewState): ViewState
